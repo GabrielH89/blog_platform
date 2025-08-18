@@ -33,6 +33,12 @@ public class Post {
 		
 	}
 
+	public Post(String titlePost, String bodyPost, String imagePost) {
+		this.titlePost = titlePost;
+		this.bodyPost = bodyPost;
+		this.imagePost = imagePost;
+	}
+	
 	public Post(Long id, String titlePost, String bodyPost, String imagePost, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.titlePost = titlePost;
