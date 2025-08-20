@@ -2,6 +2,7 @@ package com.gabriel.blog_project.entities;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tb_post")
@@ -19,8 +22,17 @@ public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(nullable = false)
+	@NotBlank(message = "Title cannot be empty")
+	@Size(max = 200, message = "Title cannot be longer than 150 characters")
 	private String titlePost;
+	
+	@Column(nullable = false)
+	@NotBlank(message = "bodyPost cannot be empty")
+	@Size(max = 200, message = "bodyPost cannot be longer than 100000 characters")
 	private String bodyPost;
+
 	private String imagePost;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
