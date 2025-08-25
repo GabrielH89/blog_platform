@@ -22,18 +22,20 @@ public class SecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    return http	
-	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-	        .csrf(csrf -> csrf.disable()) // Desabilita CSRF (necessário para H2 Console)
-	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/auth/register", "/auth/login", "/users").permitAll()
-	            .requestMatchers("/posts/**").authenticated()
-	            .anyRequest().authenticated()
-	        )
-	        .sessionManagement(session -> session
-	            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	        )
-	        .build();
+		  return http
+		        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+		        .csrf(csrf -> csrf.disable()) // necessário para o H2 Console
+		        .headers(headers -> headers.frameOptions(frame -> frame.disable())) // 👈 libera uso de frames
+		        .authorizeHttpRequests(auth -> auth
+		            .requestMatchers("/auth/register", "/auth/login").permitAll()
+		            .requestMatchers("/h2-console/**").permitAll() // 👈 libera todo o console
+		            .requestMatchers("/posts/**").authenticated()
+		            .anyRequest().authenticated()
+		        )
+		        .sessionManagement(session -> session
+		            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		        )
+		        .build();
 	}
 	
 	 @Bean
