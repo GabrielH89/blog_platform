@@ -48,15 +48,15 @@ public class PostController {
 	}
 	
 	@DeleteMapping
-	public ResponseEntity<Void> deleteAllPosts() {
+	public ResponseEntity<String> deleteAllPosts() {
 		postService.deleteAllPosts();
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok("Posts deleted with success");
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePostById(@PathVariable Long id) {
+	public ResponseEntity<String> deletePostById(@PathVariable Long id) {
 		postService.deletePostById(id);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok("Post " + id + " deleted with success");
 	}
 	
 	@PutMapping("/{id}")

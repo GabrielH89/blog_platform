@@ -85,6 +85,7 @@ public class PostService {
 		}
 		
 		postRepository.deleteAll(posts);
+		
 	}
 	
 	public void deletePostById(Long id) {
