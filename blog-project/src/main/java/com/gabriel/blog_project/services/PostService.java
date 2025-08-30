@@ -1,6 +1,7 @@
 package com.gabriel.blog_project.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -8,11 +9,14 @@ import org.springframework.stereotype.Service;
 import com.gabriel.blog_project.dtos.post.CreatePostDto;
 import com.gabriel.blog_project.dtos.post.ShowPostDto;
 import com.gabriel.blog_project.dtos.post.UpdatePostDto;
+import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.Post;
 import com.gabriel.blog_project.entities.User;
 import com.gabriel.blog_project.exceptions.EmptyDatasException;
 import com.gabriel.blog_project.repositories.PostRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class PostService {
@@ -26,8 +30,9 @@ public class PostService {
 		this.userRepository = userRepository;
 	}
 	
-	public ShowPostDto createPost(CreatePostDto createPostDto) {
-		Long userId = 1L;
+	public ShowPostDto createPost(CreatePostDto createPostDto, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
@@ -40,9 +45,10 @@ public class PostService {
 				postSaved.getImagePost(), postSaved.getCreatedAt(), postSaved.getUpdatedAt());
 	}
 	
-	public List<ShowPostDto> getAllPosts() {
-		Long userId = 1L;
-		User user = userRepository.findById(userId)
+	public List<ShowPostDto> getAllPosts(HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
 		var posts = postRepository.findAll();
@@ -51,14 +57,18 @@ public class PostService {
 			throw new EmptyDatasException("No posts found");
 		}
 		
-		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(userId, post.getTitlePost(), post.getBodyPost(), 
+		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(post.getId(), post.getTitlePost(), post.getBodyPost(), 
 				post.getImagePost(), post.getCreatedAt(), post.getUpdatedAt())).collect(Collectors.toList());
 		return result;
 	}
 	
-	public ShowPostDto getPostById(Long id) {
-	    // Busca o post pelo id
-		 var post = postRepository.findById(id)
+	public ShowPostDto getPostById(Long id, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		var post = postRepository.findById(id)
 		        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
 	    
 
@@ -73,39 +83,65 @@ public class PostService {
 	    );
 	}
 	
-	public void deleteAllPosts() {
-		Long userId = 1L;
+	public void deleteAllPosts(HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		var posts = postRepository.findAll();
+		 if (user.getRole().equals("ADMIN")) {
+		        // ADMIN can delete all posts
+		        var posts = postRepository.findAll();
+		        if (posts.isEmpty()) {
+		            throw new EmptyDatasException("No posts found to delete");
+		        }
+		        postRepository.deleteAll(posts);
+		        return;
+		    }
+
+		    // Common users: can only delete their own posts
+		    var userPosts = postRepository.findAll()
+		            .stream()
+		            .filter(post -> post.getUser().getId().equals(userId))
+		            .toList();
+
+		    if (userPosts.isEmpty()) {
+		        throw new EmptyDatasException("You have no posts to delete");
+		    }
+
 		
-		if (posts.isEmpty()) {
-			throw new EmptyDatasException("No posts found to delete");
-		}
-		
-		postRepository.deleteAll(posts);
-		
+		postRepository.deleteAll(userPosts);	
 	}
 	
-	public void deletePostById(Long id) {
-		Long userId = 1L;
+	public void deletePostById(Long id, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		 var post = postRepository.findById(id)
+		Post post = postRepository.findById(id)
 			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+		 
+		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
+			throw new RuntimeException("Você não tem permissão para atualizar este post");
+		}
+
 		 
 		postRepository.deleteById(id);
 	}
 	
-	public ShowPostDto updatePostById(Long id, UpdatePostDto updateDto) {
-		Long userId = 1L;
+	public ShowPostDto updatePostById(Long id, UpdatePostDto updateDto, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		 var post = postRepository.findById(id)
+		Post post = postRepository.findById(id)
 			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+		 
+		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
+	        throw new RuntimeException("Você não tem permissão para atualizar este post");
+	    }
 		
 		post.setTitlePost(updateDto.titlePost());
 		post.setBodyPost(updateDto.bodyPost());

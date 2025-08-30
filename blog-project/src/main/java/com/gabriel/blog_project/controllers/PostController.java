@@ -17,6 +17,7 @@ import com.gabriel.blog_project.dtos.post.ShowPostDto;
 import com.gabriel.blog_project.dtos.post.UpdatePostDto;
 import com.gabriel.blog_project.services.PostService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,38 +31,38 @@ public class PostController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ShowPostDto> createPost(@Valid @RequestBody CreatePostDto createDto) {
-		ShowPostDto postCreated = postService.createPost(createDto);
+	public ResponseEntity<ShowPostDto> createPost(@Valid @RequestBody CreatePostDto createDto, HttpServletRequest request) {
+		ShowPostDto postCreated = postService.createPost(createDto, request);
 		return ResponseEntity.status(201).body(postCreated);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<ShowPostDto>> getAllPosts() {
-		List<ShowPostDto> posts = postService.getAllPosts();
+	public ResponseEntity<List<ShowPostDto>> getAllPosts(HttpServletRequest request) {
+		List<ShowPostDto> posts = postService.getAllPosts(request);
 		return ResponseEntity.ok(posts);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ShowPostDto> getPostById(@PathVariable Long id) {
-		ShowPostDto post = postService.getPostById(id);
+	public ResponseEntity<ShowPostDto> getPostById(@PathVariable Long id, HttpServletRequest request) {
+		ShowPostDto post = postService.getPostById(id, request);
 		return ResponseEntity.ok(post);
 	}
 	
 	@DeleteMapping
-	public ResponseEntity<String> deleteAllPosts() {
-		postService.deleteAllPosts();
+	public ResponseEntity<String> deleteAllPosts(HttpServletRequest request) {
+		postService.deleteAllPosts(request);
 		return ResponseEntity.ok("Posts deleted with success");
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deletePostById(@PathVariable Long id) {
-		postService.deletePostById(id);
+	public ResponseEntity<String> deletePostById(@PathVariable Long id, HttpServletRequest request) {
+		postService.deletePostById(id, request);
 		return ResponseEntity.ok("Post " + id + " deleted with success");
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<ShowPostDto> updatePostById(@Valid @RequestBody UpdatePostDto updateDto, @PathVariable Long id) {
-		ShowPostDto postUpdated = postService.updatePostById(id, updateDto);
+	public ResponseEntity<ShowPostDto> updatePostById(@Valid @RequestBody UpdatePostDto updateDto, @PathVariable Long id, HttpServletRequest request) {
+		ShowPostDto postUpdated = postService.updatePostById(id, updateDto, request);
 		return ResponseEntity.ok(postUpdated);
 	}
 }
