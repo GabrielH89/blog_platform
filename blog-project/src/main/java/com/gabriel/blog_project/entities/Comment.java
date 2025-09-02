@@ -1,9 +1,7 @@
 package com.gabriel.blog_project.entities;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -19,24 +16,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "tb_post")
-public class Post {
+@Table(name = "tb_comment")
+public class Comment {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false)
-	@NotBlank(message = "Title cannot be empty")
-	@Size(max = 200, message = "Title cannot be longer than 150 characters")
-	private String titlePost;
-	
-	@Column(nullable = false)
-	@NotBlank(message = "bodyPost cannot be empty")
-	@Size(max = 200, message = "bodyPost cannot be longer than 100000 characters")
-	private String bodyPost;
-
-	private String imagePost;
+	@NotBlank(message = "Comment cannot be empty")
+	@Size(max = 200, message = "Comment cannot be longer than 2000 characters")
+	private String comment_body;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
@@ -44,28 +34,25 @@ public class Post {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Comment> comments;
-	
-	public Post() {
-		
-	}
+	@ManyToOne
+	@JoinColumn(name = "post_id", nullable = false)
+	private Post post;
 
-	public Post(String titlePost, String bodyPost, String imagePost) {
-		this.titlePost = titlePost;
-		this.bodyPost = bodyPost;
-		this.imagePost = imagePost;
-	}
 	
-	public Post(Long id, String titlePost, String bodyPost, String imagePost, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public Comment() {
+		
+	}	
+
+	public Comment(Long id, String comment_body, LocalDateTime createdAt, LocalDateTime updatedAt, User user, Post post) {
 		this.id = id;
-		this.titlePost = titlePost;
-		this.bodyPost = bodyPost;
-		this.imagePost = imagePost;
+		this.comment_body = comment_body;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.user = user;
+		this.post = post;
 	}
-	
+
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
@@ -85,28 +72,12 @@ public class Post {
 		this.id = id;
 	}
 
-	public String getTitlePost() {
-		return titlePost;
+	public String getComment_body() {
+		return comment_body;
 	}
 
-	public void setTitlePost(String titlePost) {
-		this.titlePost = titlePost;
-	}
-
-	public String getBodyPost() {
-		return bodyPost;
-	}
-
-	public void setBodyPost(String bodyPost) {
-		this.bodyPost = bodyPost;
-	}
-
-	public String getImagePost() {
-		return imagePost;
-	}
-
-	public void setImagePost(String imagePost) {
-		this.imagePost = imagePost;
+	public void setComment_body(String comment_body) {
+		this.comment_body = comment_body;
 	}
 
 	public LocalDateTime getCreatedAt() {
@@ -132,5 +103,15 @@ public class Post {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
 }
+
+

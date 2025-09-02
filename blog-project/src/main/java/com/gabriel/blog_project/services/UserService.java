@@ -10,6 +10,8 @@ import com.gabriel.blog_project.dtos.user.UserDto;
 import com.gabriel.blog_project.entities.User;
 import com.gabriel.blog_project.repositories.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class UserService implements UserDetailsService {
 	
@@ -22,5 +24,16 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByLogin(username);
+	}
+	
+	public String deleteAccount(HttpServletRequest request) {
+		Long userId = (Long) request.getAttribute("userId");
+		
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		userRepository.delete(user);
+		
+		return "User deleted with success";
 	}
 }
