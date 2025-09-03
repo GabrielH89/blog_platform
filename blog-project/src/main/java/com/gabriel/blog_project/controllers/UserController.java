@@ -9,7 +9,6 @@ import com.gabriel.blog_project.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-
 @RestController
 @RequestMapping("/users")
 public class UserController {

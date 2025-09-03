@@ -41,7 +41,11 @@ public class Comment {
 	
 	public Comment() {
 		
-	}	
+	}
+	
+	public Comment(String comment_body) {
+		this.comment_body = comment_body;
+	}
 
 	public Comment(Long id, String comment_body, LocalDateTime createdAt, LocalDateTime updatedAt, User user, Post post) {
 		this.id = id;
