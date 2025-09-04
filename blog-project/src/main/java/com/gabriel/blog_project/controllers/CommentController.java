@@ -1,6 +1,9 @@
 package com.gabriel.blog_project.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +15,7 @@ import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
 import com.gabriel.blog_project.services.CommentService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/posts/{postId}/comments")
@@ -24,9 +28,16 @@ public class CommentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ShowCommentDto> createComment(@PathVariable Long postId, @RequestBody CreateCommentDto createDto, HttpServletRequest request) {
+	public ResponseEntity<ShowCommentDto> createComment(@Valid @PathVariable Long postId, @RequestBody CreateCommentDto createDto, 
+			HttpServletRequest request) {
 		ShowCommentDto commentCreated = commentService.createComment(postId, createDto, request);
 		return ResponseEntity.status(201).body(commentCreated);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<ShowCommentDto>> getAllComments(@PathVariable Long postId, HttpServletRequest request) {
+		List<ShowCommentDto> comments = commentService.getAllComments(postId, request);
+		return ResponseEntity.ok(comments);
 	}
 }
 

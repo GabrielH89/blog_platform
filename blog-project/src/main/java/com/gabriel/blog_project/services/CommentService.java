@@ -1,12 +1,14 @@
 package com.gabriel.blog_project.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-
 import com.gabriel.blog_project.dtos.comment.CreateCommentDto;
 import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
 import com.gabriel.blog_project.entities.Comment;
 import com.gabriel.blog_project.entities.Post;
 import com.gabriel.blog_project.entities.User;
+import com.gabriel.blog_project.exceptions.EmptyDatasException;
 import com.gabriel.blog_project.repositories.CommentRepository;
 import com.gabriel.blog_project.repositories.PostRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
@@ -33,7 +35,7 @@ public class CommentService {
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new RuntimeException("User not foun"));
+				.orElseThrow(() -> new EmptyDatasException("Post not found"));
 		
 		var comment = new Comment(createDto.comment_body());
 		comment.setUser(user);
@@ -41,7 +43,28 @@ public class CommentService {
 		
 		var commentSaved = commentRepository.save(comment);
 		
-		return new ShowCommentDto(commentSaved.getComment_body(), commentSaved.getCreatedAt(), commentSaved.getUpdatedAt());
+		return new ShowCommentDto(commentSaved.getId(), commentSaved.getComment_body(), commentSaved.getCreatedAt(), commentSaved.getUpdatedAt());
+	}
+	
+	public List<ShowCommentDto> getAllComments(Long postId, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		postRepository.findById(postId)
+				.orElseThrow(() -> new EmptyDatasException("Post not found"));
+		
+		var comments = commentRepository.findByPostId(postId);
+		
+		if(comments.isEmpty()) {
+			throw new EmptyDatasException("No comments found");
+		}
+				
+		List<ShowCommentDto> result = comments.stream().map(comment -> new ShowCommentDto(comment.getId(), comment.getComment_body(), 
+				comment.getCreatedAt(), comment.getUpdatedAt())).collect(Collectors.toList());
+		
+		return result;
 	}
 }
 
