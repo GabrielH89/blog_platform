@@ -39,6 +39,12 @@ public class CommentController {
 		List<ShowCommentDto> comments = commentService.getAllComments(postId, request);
 		return ResponseEntity.ok(comments);
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<ShowCommentDto> getCommentById(@PathVariable Long postId, @PathVariable Long id, HttpServletRequest request) {
+		ShowCommentDto comment = commentService.getCommentById(postId, id, request);
+		return ResponseEntity.ok(comment);
+	}
 }
 
 

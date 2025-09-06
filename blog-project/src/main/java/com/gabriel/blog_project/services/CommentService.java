@@ -55,7 +55,7 @@ public class CommentService {
 		postRepository.findById(postId)
 				.orElseThrow(() -> new EmptyDatasException("Post not found"));
 		
-		var comments = commentRepository.findByPostId(postId);
+		var comments = commentRepository.findCommentByPostId(postId);
 		
 		if(comments.isEmpty()) {
 			throw new EmptyDatasException("No comments found");
@@ -65,6 +65,21 @@ public class CommentService {
 				comment.getCreatedAt(), comment.getUpdatedAt())).collect(Collectors.toList());
 		
 		return result;
+	}
+	
+	public ShowCommentDto getCommentById(Long postId, Long commentId, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+		.orElseThrow(() -> new RuntimeException("User not found"));
+
+		postRepository.findById(postId)
+		.orElseThrow(() -> new EmptyDatasException("Post not found"));
+		
+		 var comment = commentRepository.findByPostIdAndId(postId, commentId)
+			        .orElseThrow(() -> new EmptyDatasException("Comment not found"));
+		
+		return new ShowCommentDto(commentId, comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt());
 	}
 }
 
