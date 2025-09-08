@@ -41,4 +41,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 	
+	@ExceptionHandler(PermissionDeniedException.class) 
+	public ResponseEntity<Object> handlePermissionDeniedException(PermissionDeniedException ex) {
+		Map<String, Object> response = Map.of(
+				"timestamp", LocalDateTime.now(),
+				"status", HttpStatus.FORBIDDEN.value(),
+				"error", "You have no permission",
+				"message", ex.getMessage()
+		);
+		return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+	}
 }

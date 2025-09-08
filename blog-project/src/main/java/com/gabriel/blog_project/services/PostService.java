@@ -13,6 +13,7 @@ import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.Post;
 import com.gabriel.blog_project.entities.User;
 import com.gabriel.blog_project.exceptions.EmptyDatasException;
+import com.gabriel.blog_project.exceptions.PermissionDeniedException;
 import com.gabriel.blog_project.repositories.PostRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
 
@@ -123,7 +124,7 @@ public class PostService {
 			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
 		 
 		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
-			throw new RuntimeException("Você não tem permissão para atualizar este post");
+			 throw new PermissionDeniedException("You have no permission to delete this post");
 		}
 
 		 
@@ -140,7 +141,7 @@ public class PostService {
 			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
 		 
 		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
-	        throw new RuntimeException("Você não tem permissão para atualizar este post");
+	        throw new PermissionDeniedException("You have no permission to update this post");
 	    }
 		
 		post.setTitlePost(updateDto.titlePost());

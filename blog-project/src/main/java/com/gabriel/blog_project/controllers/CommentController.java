@@ -3,6 +3,7 @@ package com.gabriel.blog_project.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,12 @@ public class CommentController {
 	public ResponseEntity<ShowCommentDto> getCommentById(@PathVariable Long postId, @PathVariable Long id, HttpServletRequest request) {
 		ShowCommentDto comment = commentService.getCommentById(postId, id, request);
 		return ResponseEntity.ok(comment);
+	}
+	
+	@DeleteMapping("/{id}") 
+	public ResponseEntity<String> deleteCommentById(@PathVariable Long postId, @PathVariable Long id, HttpServletRequest request) {
+		commentService.deleteCommentById(postId, id, request);
+		return ResponseEntity.ok("Comment deleted with success");
 	}
 }
 
