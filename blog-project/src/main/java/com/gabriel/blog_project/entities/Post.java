@@ -33,7 +33,7 @@ public class Post {
 	
 	@Column(nullable = false)
 	@NotBlank(message = "bodyPost cannot be empty")
-	@Size(max = 200, message = "bodyPost cannot be longer than 100000 characters")
+	@Size(max = 100000, message = "bodyPost cannot be longer than 100000 characters")
 	private String bodyPost;
 
 	private String imagePost;

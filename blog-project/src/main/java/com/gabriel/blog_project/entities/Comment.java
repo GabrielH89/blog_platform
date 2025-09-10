@@ -25,7 +25,7 @@ public class Comment {
 	
 	@Column(nullable = false)
 	@NotBlank(message = "Comment cannot be empty")
-	@Size(max = 200, message = "Comment cannot be longer than 2000 characters")
+	@Size(max = 2000, message = "Comment cannot be longer than 2000 characters")
 	private String comment_body;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
