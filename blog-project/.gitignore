@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+#Arquivos de confiração sensíveis
+.env
+.env.example
+
 ### STS ###
 .apt_generated
 .classpath
