@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.gabriel.blog_project.dtos.comment.CreateCommentDto;
 import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
+import com.gabriel.blog_project.dtos.comment.UpdateCommentDto;
 import com.gabriel.blog_project.entities.Comment;
 import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.Post;
@@ -102,6 +103,30 @@ public class CommentService {
 		}
 		
 		commentRepository.delete(comment);
+	}
+	
+	public ShowCommentDto updateCommentById(Long commentId, Long postId, UpdateCommentDto updateDto, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		postRepository.findById(postId)
+			.orElseThrow(() -> new EmptyDatasException("Post not found"));
+		
+		var comment = commentRepository.findByPostIdAndId(postId, commentId)
+			.orElseThrow(() -> new EmptyDatasException("Comment not found"));
+		
+		if(!Objects.equals(comment.getUser().getId(), userId)) {
+			throw new PermissionDeniedException("You have no permission to update this comment.");
+		}
+		
+		comment.setComment_body(updateDto.comment_body());
+		comment.setUpdatedAt(updateDto.updatedAt());
+		
+		commentRepository.save(comment);
+		
+		return new ShowCommentDto(comment.getId(), comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt());
 	}
 }
 
