@@ -7,6 +7,7 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,17 +18,17 @@ function SignIn() {
     }
 
     try{
-      const response = await axios.post("http://localhost:8080/auth/login", {login, password})
+      const response = await axios.post(`${API_URL}/auth/login`, {login, password})
       const {token, userId} = response.data;
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("userId", userId);
       navigate("/home");
     }catch(error) {
       const axiosError = error as AxiosError;
-      if(axiosError.response?.status === 409 || axiosError.response?.status) {
+      if(axiosError.response?.status === 409 || axiosError.response?.status === 404) {
         setErrorMessage("Email ou senha inválidos");
       }else{
-        setErrorMessage("Erro ao tentar login, tente novmaente mais tarde");
+        setErrorMessage("Erro ao tentar login, tente novamente mais tarde");
       }
       setTimeout(() => setErrorMessage(""), 3000);
     }
