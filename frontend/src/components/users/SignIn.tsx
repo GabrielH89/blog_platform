@@ -1,16 +1,22 @@
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingModal from "../../utils/LoadingModal";
+import '../../styles/users/SignIn.css';
 
 function SignIn() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setIsLoading(true);
+    setErrorMessage("");
 
     if(!login.trim() || !password.trim()) {
       setErrorMessage("Preencha todos os campos");
@@ -25,23 +31,27 @@ function SignIn() {
       navigate("/home");
     }catch(error) {
       const axiosError = error as AxiosError;
-      if(axiosError.response?.status === 409 || axiosError.response?.status === 404) {
+      if(axiosError.response?.status === 401 || axiosError.response?.status === 404) {
         setErrorMessage("Email ou senha inválidos");
+        setIsLoading(false);
       }else{
         setErrorMessage("Erro ao tentar login, tente novamente mais tarde");
       }
       setTimeout(() => setErrorMessage(""), 3000);
+    }finally {
+       setIsLoading(false);
     }
   }
 
   return (
     <div className="signInContainer">
+      {isLoading && <LoadingModal/>}
       <form className="signInForm" onSubmit={handleLogin}>
         {errorMessage && <div className="error-message">{errorMessage}</div>}
         <h2>Login</h2>
         <div className="formGroup">
           <label>Email</label>
-          <input type="login" value={login} onChange={(e) => setLogin(e.target.value)} required></input>
+          <input type="email" value={login} onChange={(e) => setLogin(e.target.value)} required></input>
         </div>
 
          <div className="formGroup">
