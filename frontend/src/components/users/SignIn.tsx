@@ -3,12 +3,15 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingModal from "../../utils/LoadingModal";
 import '../../styles/users/SignIn.css';
+import SignUp from "./SignUp";
+import Modal from "../../utils/Modal";
 
 function SignIn() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignUpOpen, setSignUpOpen] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -60,8 +63,13 @@ function SignIn() {
         </div>
 
         <button type="submit">Entrar</button>
-        <p>Não possui uma conta? <Link to="/signUp"></Link></p>
+        <p>Não possui uma conta?{" "} 
+          <Link className="cadastre-div" to="#" onClick={() => setSignUpOpen(true)}>Cadastre-se</Link></p>
       </form>
+
+        <Modal isOpen={isSignUpOpen} onClose={() => setSignUpOpen(false)}>
+          <SignUp />
+        </Modal>
     </div>
   )
 }
