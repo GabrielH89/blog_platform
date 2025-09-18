@@ -24,18 +24,18 @@ body {
     color: #2563EB;
 }
 
-.formGroup {
+.signInForm .formGroup {
   margin-bottom: 15px;
 }
 
-label {
+.signInForm label {
   display: block;
   margin-bottom: 5px;
   font-size: 1.2rem;
   font-weight: bold;
 }
 
-input[type='email'],
+.signInForm input[type='email'],
 input[type='password'] {
     width: calc(100% - 16px); /* Leva em consideração o padding (8px) do elemento */
     padding: 8px;
@@ -44,12 +44,12 @@ input[type='password'] {
     font-size: 1.1rem;
 }
 
-.login-btn {
+.signInForm .login-btn {
   display: flex;
   justify-content: center;
 }
 
-button {
+.signInForm button {
   width: calc(100% - 16px); /* Leva em consideração o padding (8px) do elemento */
   padding: 10px;
   background-color: #2563EB;
@@ -60,7 +60,7 @@ button {
   font-size: 1rem;
 }
 
-button:hover {
+.signInForm button:hover {
   background-color: darkblue;
 }
 

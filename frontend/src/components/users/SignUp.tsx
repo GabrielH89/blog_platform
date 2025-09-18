@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import '../../styles/users/SignUp.css';
 
 function SignUp() {
     const [username, setUsername] = useState("");
@@ -48,14 +49,14 @@ function SignUp() {
     try{
         const userData = {username, login, password};
 
-        await axios.post(`${API_URL}/auth/login`, {userData}, {
+        await axios.post(`${API_URL}/auth/register`, userData, {
             headers: {
                 "Content-Type": "application/json",
             }
         });
         setUsername(""); setLogin(""); setPassword(""); setConfirmPassword("");
 
-        alert("Cadastro realizado com sucess");
+        alert("Cadastro realizado com sucesso");
         navigate("/");
     }catch(error) {
         const axiosError = error as AxiosError;
@@ -71,20 +72,12 @@ function SignUp() {
     }
     
     return (
-        <div>
+        <div className="signUpContainer">
              <form className="signUpForm" onSubmit={handleSignUp}>
                 {errorMessage && (
                 <div
-                    className="error-message"
-                    style={{
-                    backgroundColor: "#B22222",
-                    color: "white",
-                    padding: "10px",
-                    marginBottom: "10px",
-                    borderRadius: "5px",
-                    textAlign: "center",
-                    fontSize: "1.1rem",
-                    }}
+                    className="error-message" style={{backgroundColor: "#B22222", color: "white", padding: "10px",
+                    marginBottom: "10px", borderRadius: "5px", textAlign: "center", fontSize: "1.1rem"}}
                 >
                     {errorMessage}
                 </div>
