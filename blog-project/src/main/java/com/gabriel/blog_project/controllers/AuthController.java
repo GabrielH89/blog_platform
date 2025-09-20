@@ -84,7 +84,7 @@ public class AuthController {
 	        var userAuthenticated = (User) authentication.getPrincipal(); 
 	        var token = tokenService.generateToken(userAuthenticated);
 	        
-	        return ResponseEntity.ok(new LoginResponseDto(token, userAuthenticated.getId()));
+	        return ResponseEntity.ok(new LoginResponseDto(token, userAuthenticated.getId(), userAuthenticated.getRole().name()));
 		}catch(Exception e) {
 			 return ResponseEntity.status(401).body(new LoginResponseDto("Invalid email or password"));
 		}

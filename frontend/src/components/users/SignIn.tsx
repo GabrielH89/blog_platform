@@ -28,10 +28,16 @@ function SignIn() {
 
     try{
       const response = await axios.post(`${API_URL}/auth/login`, {login, password})
-      const {token, userId} = response.data;
+      const {token, userId, role} = response.data;
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("userId", userId);
-      navigate("/home");
+      sessionStorage.setItem("tole", role);
+
+      if(role === "USER") {
+        navigate("/home");
+      }else{
+        navigate("/admin")
+      }
     }catch(error) {
       const axiosError = error as AxiosError;
       if(axiosError.response?.status === 401 || axiosError.response?.status === 404) {
