@@ -1,0 +1,160 @@
+.home-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar do usuário */
+.sidebar-user {
+  flex: 0 0 300px;  
+  max-width: 300px;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd; 
+  height: 300px; 
+  color: white;
+  transition: transform 0.3s ease-in-out;
+}
+
+.profile-image {
+  width: 100%;
+  border-radius: 10px;
+  margin: 15px 0;
+}
+
+.sidebar-user ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-user li {
+  margin: 10px 0;
+}
+
+.sidebar-user li a {
+  text-decoration: none;
+}
+
+.sidebar-user a,
+.sidebar-user button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  border: none;
+  background: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: white;
+}
+
+.sidebar-user a:hover,
+.sidebar-user button:hover {
+  border-radius: 6px;
+  color: #007BFF;
+}
+
+/* Área de posts */
+.posts-section {
+  flex: 1; 
+  padding: 20px;
+}
+
+.post-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-user {
+    flex: 0 0 25%;
+  }
+
+  .posts-section {
+    flex: 0 0 75%;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-user {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    max-width: 250px;
+    transform: translateX(-100%); /* escondido */
+    z-index: 1000;
+  }
+
+  .sidebar-user.open {
+    transform: translateX(0); /* aparece */
+  }
+}
+
+/* Botão de menu (hambúrguer / fechar) */
+.menu-toggle {
+  display: none; /* só aparece no mobile */
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #333;
+  margin: 10px;
+  z-index: 1100; /* acima da sidebar */
+}
+
+@media (max-width: 768px) {
+  /* botão visível no topo */
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  /* a sidebar vira um menu suspenso no topo */
+  .sidebar-user {
+    position: absolute;
+    top: 60px; /* altura do botão */
+    left: 0;
+    right: 0;
+    height: auto;
+    max-width: 100%;
+    background: #222; /* fundo pro menu */
+    padding: 15px;
+    border: none;
+    transform: translateY(-150%); /* escondido pra cima */
+    transition: transform 0.3s ease-in-out;
+    text-align: center;
+  }
+
+  .sidebar-user.open {
+    transform: translateY(0); /* aparece */
+  }
+
+  .sidebar-user ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar-user a,
+  .sidebar-user button {
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  /* posts ocupam 100% */
+  .posts-section {
+    flex: 1;
+    padding: 20px;
+    margin-top: 60px; /* espaço pro botão */
+  }
+}
