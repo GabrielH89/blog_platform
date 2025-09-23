@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gabriel.blog_project.dtos.user.DeleteImageUserDto;
 import com.gabriel.blog_project.dtos.user.UpdateDatasUserDto;
 import com.gabriel.blog_project.dtos.user.UserDto;
 import com.gabriel.blog_project.entities.Comment;
@@ -45,7 +46,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByLogin(username);
 	}
-	
+		
 	public String deleteAccount(HttpServletRequest request) {
 		Long userId = (Long) request.getAttribute("userId");
 		
@@ -127,4 +128,46 @@ public class UserService implements UserDetailsService {
 		            "user", userDto
 		    ));
 	}
+	
+	public DeleteImageUserDto deleteUserImage(HttpServletRequest request) {
+		Long userId = (Long) request.getAttribute("userId");
+		
+		if (userId == null) {
+	        throw new IllegalArgumentException("User not found");
+	    }
+		
+		 User user = userRepository.findById(userId)
+			        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+		 
+	        try {
+	            if (user.getImageUser() != null) {
+	                imageStorageService.deleteImage(user.getImageUser());
+	            }
+	           
+	        } catch (Exception e) {
+	            throw new RuntimeException("Error to process image", e);
+	        }
+		 
+		 user.setImageUser(null);
+		 userRepository.save(user);
+		 return new DeleteImageUserDto(null);
+	}
+	
+	public UserDto getUserById(HttpServletRequest request) {
+	    Long userId = (Long) request.getAttribute("userId");
+
+	    if (userId == null) {
+	        throw new IllegalArgumentException("User not found");
+	    }
+
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+	    
+	    return new UserDto(
+	        user.getUsername(),
+	        user.getLogin(),
+	        user.getImageUser()
+	    );
+	}
+
 }
