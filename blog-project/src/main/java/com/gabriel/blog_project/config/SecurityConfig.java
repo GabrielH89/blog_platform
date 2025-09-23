@@ -34,7 +34,7 @@ public class SecurityConfig {
 		        .csrf(csrf -> csrf.disable()) // necessário para o H2 Console
 		        .headers(headers -> headers.frameOptions(frame -> frame.disable())) // 👈 libera uso de frames
 		        .authorizeHttpRequests(auth -> auth
-		            .requestMatchers("/auth/register", "/auth/login").permitAll()
+		            .requestMatchers("/auth/register", "/auth/login", "/uploads/**").permitAll()
 		            .requestMatchers("/h2-console/**").permitAll() // 👈 libera todo o console
 		            .requestMatchers("/posts/**").authenticated()
 		            .anyRequest().authenticated()
