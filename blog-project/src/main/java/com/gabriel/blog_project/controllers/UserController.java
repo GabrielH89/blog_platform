@@ -3,10 +3,14 @@ package com.gabriel.blog_project.controllers;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.gabriel.blog_project.dtos.user.DeleteImageUserDto;
 import com.gabriel.blog_project.dtos.user.UpdateDatasUserDto;
+import com.gabriel.blog_project.dtos.user.UserDto;
 import com.gabriel.blog_project.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -36,5 +40,17 @@ public class UserController {
 	@PutMapping
 	public ResponseEntity<Map<String, Object>> updateDatasUser(HttpServletRequest request, @Valid UpdateDatasUserDto updateDto) {
 		return userService.updateDatasUser(request, updateDto);
+	}
+	
+	@DeleteMapping("/image")
+	public ResponseEntity<DeleteImageUserDto> deleteUserImage(HttpServletRequest request) {
+		DeleteImageUserDto imageDto =  userService.deleteUserImage(request);
+		return ResponseEntity.ok(imageDto);
+	}
+	
+	@GetMapping
+	public ResponseEntity<UserDto> getUerById(HttpServletRequest request) {
+		UserDto userDto = userService.getUserById(request);
+		return ResponseEntity.ok(userDto);
 	}
 }
