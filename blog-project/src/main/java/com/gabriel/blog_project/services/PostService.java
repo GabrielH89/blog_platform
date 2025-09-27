@@ -1,10 +1,14 @@
 package com.gabriel.blog_project.services;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gabriel.blog_project.dtos.post.CreatePostDto;
 import com.gabriel.blog_project.dtos.post.ShowPostDto;
@@ -17,6 +21,7 @@ import com.gabriel.blog_project.exceptions.PermissionDeniedException;
 import com.gabriel.blog_project.repositories.PostRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
 
+import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
@@ -31,19 +36,51 @@ public class PostService {
 		this.userRepository = userRepository;
 	}
 	
+		
 	public ShowPostDto createPost(CreatePostDto createPostDto, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		var post = new Post(createPostDto.titlePost(), createPostDto.bodyPost(), createPostDto.imagePost());
-		
-		post.setUser(user);
-		var postSaved = postRepository.save(post);
-		
-		return new ShowPostDto(postSaved.getId(), postSaved.getTitlePost(), postSaved.getBodyPost(), 
-				postSaved.getImagePost(), postSaved.getCreatedAt(), postSaved.getUpdatedAt());
+	    long userId = (Long) request.getAttribute("userId");
+
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    MultipartFile imageFile = createPostDto.imagePost();
+	    String fileName = null;
+	    String fileUrl = null; 
+
+	    if (imageFile != null && !imageFile.isEmpty()) {
+	        fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+	        Path uploadPath = Paths.get("uploads").toAbsolutePath(); 
+
+	        try {
+	            Files.createDirectories(uploadPath);
+
+	            Path filePath = uploadPath.resolve(fileName);
+
+	            // salva o arquivo no disco
+	            imageFile.transferTo(filePath.toFile());
+
+	            // cria a URL relativa para acesso via HTTP
+	            fileUrl = "/uploads/" + fileName;
+
+	        } catch (IOException e) {
+	            throw new RuntimeException("Erro ao salvar imagem", e);
+	        }
+	    }
+
+	    // cria a entidade Post, usando a URL da imagem
+	    var post = new Post(createPostDto.titlePost(), createPostDto.bodyPost(), fileUrl);
+	    post.setUser(user);
+
+	    var postSaved = postRepository.save(post);
+
+	    return new ShowPostDto(
+	            postSaved.getId(),
+	            postSaved.getTitlePost(),
+	            postSaved.getBodyPost(),
+	            postSaved.getImagePost(), // aqui é a URL "/uploads/NOME_DO_ARQUIVO"
+	            postSaved.getCreatedAt(),
+	            postSaved.getUpdatedAt()
+	    );
 	}
 	
 	public List<ShowPostDto> getAllPosts(HttpServletRequest request) {

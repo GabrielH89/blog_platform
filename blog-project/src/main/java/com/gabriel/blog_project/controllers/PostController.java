@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,7 +32,7 @@ public class PostController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ShowPostDto> createPost(@Valid @RequestBody CreatePostDto createDto, HttpServletRequest request) {
+	public ResponseEntity<ShowPostDto> createPost(@Valid @ModelAttribute CreatePostDto createDto, HttpServletRequest request) {
 		ShowPostDto postCreated = postService.createPost(createDto, request);
 		return ResponseEntity.status(201).body(postCreated);
 	}
