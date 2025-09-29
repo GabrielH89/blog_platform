@@ -8,6 +8,9 @@ target/
 .env
 .env.example
 
+#Diretórios privados
+/uploads
+
 ### STS ###
 .apt_generated
 .classpath
