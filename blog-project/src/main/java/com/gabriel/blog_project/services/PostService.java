@@ -30,12 +30,10 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final UserRepository userRepository;	
 	
-	
 	public PostService(PostRepository postRepository, UserRepository userRepository) {
 		this.postRepository = postRepository;
 		this.userRepository = userRepository;
 	}
-	
 		
 	public ShowPostDto createPost(CreatePostDto createPostDto, HttpServletRequest request) {
 	    long userId = (Long) request.getAttribute("userId");
@@ -109,7 +107,6 @@ public class PostService {
 		var post = postRepository.findById(id)
 		        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
 	    
-
 	    // Mapeia o Post para ShowPostDto
 	    return new ShowPostDto(
 	            post.getId(),

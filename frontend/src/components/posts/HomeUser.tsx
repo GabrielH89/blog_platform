@@ -48,7 +48,7 @@ function HomeUser() {
         />
         <ul>
           <li>
-            <Link to="/personal-profile" className="dropdown-button">Informações pessoais</Link>
+            <Link to="/profile" className="dropdown-button">Informações pessoais</Link>
           </li>
           <li>
             <Link to="/statistics-user" className="dropdown-button">Ver estatísticas</Link>
@@ -72,25 +72,15 @@ function HomeUser() {
             <div
               key={post.id}
               className="post-card"
-              style={{
-                border: "1px solid #ccc",
-                margin: "10px",
-                padding: "10px",
-              }}
-            >
+              style={{border: "1px solid #ccc", margin: "10px", padding: "10px"}}>
               <h2>{post.titlePost}</h2>
-              <p>{post.bodyPost}</p>
-              {post.imagePost && (
+               {post.imagePost && (
                 <img
-                  src={post.imagePost}
+                  src={`${API_URL}${post.imagePost}`}
                   alt={post.titlePost}
-                  style={{
-                    maxWidth: "200px",
-                    display: "block",
-                    marginTop: "10px",
-                  }}
-                />
+                  style={{maxWidth: "200px", display: "block", marginTop: "10px"}}/>
               )}
+              <p>{post.bodyPost}</p>
               <small>
                 Criado em: {new Date(post.createdAt).toLocaleDateString()}
               </small>
