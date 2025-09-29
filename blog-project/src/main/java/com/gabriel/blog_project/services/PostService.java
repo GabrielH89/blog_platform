@@ -98,6 +98,23 @@ public class PostService {
 		return result;
 	}
 	
+	public List<ShowPostDto> getPostsUser(HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		
+		var posts = postRepository.findPostByUserId(userId);
+		
+		if(posts.isEmpty()) {
+			throw new EmptyDatasException("No posts found");
+		}
+		
+		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(post.getId(), post.getTitlePost(), post.getBodyPost(), 
+				post.getImagePost(), post.getCreatedAt(), post.getUpdatedAt())).collect(Collectors.toList());
+		return result;
+	}
+	
 	public ShowPostDto getPostById(Long id, HttpServletRequest request) {
 		long userId = (Long) request.getAttribute("userId");
 		

@@ -43,6 +43,12 @@ public class PostController {
 		return ResponseEntity.ok(posts);
 	}
 	
+	@GetMapping("/user")
+	public ResponseEntity<List<ShowPostDto>> getPostsUser(HttpServletRequest request) {
+		List<ShowPostDto> posts = postService.getPostsUser(request);
+		return ResponseEntity.ok(posts);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<ShowPostDto> getPostById(@PathVariable Long id, HttpServletRequest request) {
 		ShowPostDto post = postService.getPostById(id, request);
