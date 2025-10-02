@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import '../../styles/posts/HomeUser.css';
 import { Link } from "react-router-dom";
+import { useUserData } from "../../utils/useUserData";
+import { FaUserCircle } from "react-icons/fa";
 
 interface Post {
     id: number;
@@ -16,6 +18,7 @@ interface Post {
 function HomeUser() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const {imageUser} = useUserData();
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -41,11 +44,12 @@ function HomeUser() {
       <button className="menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>{isSidebarOpen ? "✖" : "☰"}</button>
       <aside className={`sidebar-user ${isSidebarOpen ? "open" : ""}`}>
         <h2>Área do Usuário</h2>
-        <img
-          src="https://via.placeholder.com/150"
-          alt="Foto do usuário"
-          className="profile-image"
-        />
+        {imageUser ? (
+          <img src={`${API_URL}${imageUser}`} alt='Imagem do perfil' className='profile-picture'
+            style={{ width: 200, height: 200, borderRadius: "50%", objectFit: "cover" }}/>
+          ) : (
+            <FaUserCircle size={200} />
+        )}
         <ul>
           <li>
             <Link to="/profile" className="dropdown-button">Informações pessoais</Link>
