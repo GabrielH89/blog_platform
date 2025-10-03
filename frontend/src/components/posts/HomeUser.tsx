@@ -4,6 +4,7 @@ import '../../styles/posts/HomeUser.css';
 import { Link } from "react-router-dom";
 import { useUserData } from "../../utils/useUserData";
 import { FaUserCircle } from "react-icons/fa";
+import Logout from "../../utils/Logout";
 
 interface Post {
     id: number;
@@ -61,7 +62,7 @@ function HomeUser() {
             <button>Deletar todos os seus posts</button>
           </li>
           <li>
-            <button>Sair</button>
+            <Logout></Logout>
           </li>
         </ul>
       </aside>
@@ -69,6 +70,7 @@ function HomeUser() {
       {/* Área dos posts */}
       <main className="posts-section">
         <h1>Posts</h1>
+        
         {posts.length === 0 ? (
           <p>Nenhum post encontrado</p>
         ) : (
