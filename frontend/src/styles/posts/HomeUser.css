@@ -56,6 +56,19 @@
 }
 
 /* Área de posts */
+.add-post {
+  cursor: pointer;
+  width: 200px;
+  height: 40px;
+  font-size: 1.2rem;
+}
+
+.add-post:hover {
+  background-color: #007BFF;
+  color: white;
+  transition: 0.3s;
+}
+
 .posts-section {
   flex: 1; 
   padding: 20px;

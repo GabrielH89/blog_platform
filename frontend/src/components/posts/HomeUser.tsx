@@ -5,21 +5,24 @@ import { Link } from "react-router-dom";
 import { useUserData } from "../../utils/useUserData";
 import { FaUserCircle } from "react-icons/fa";
 import Logout from "../../utils/Logout";
+import AddPostForm from "./AddPostForm";
+import Modal from "../../utils/Modal";
 
 interface Post {
-    id: number;
-    titlePost: string;
-    bodyPost: string;
-    imagePost: string;
-    createdAt: string;
-    updatedAt: string;
-    userId: number;
+  id: number;
+  titlePost: string;
+  bodyPost: string;
+  imagePost: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
 }
 
 function HomeUser() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const {imageUser} = useUserData();
+  const [isAddPostOpen, setIsAddPostOpen] = useState(false);
+  const { imageUser } = useUserData();
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -37,19 +40,29 @@ function HomeUser() {
       }
     };
     fetchPosts();
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="home-container">
       {/* Sidebar do perfil */}
-      <button className="menu-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>{isSidebarOpen ? "✖" : "☰"}</button>
+      <button 
+        className="menu-toggle" 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        {isSidebarOpen ? "✖" : "☰"}
+      </button>
+
       <aside className={`sidebar-user ${isSidebarOpen ? "open" : ""}`}>
         <h2>Área do Usuário</h2>
         {imageUser ? (
-          <img src={`${API_URL}${imageUser}`} alt='Imagem do perfil' className='profile-picture'
-            style={{ width: 200, height: 200, borderRadius: "50%", objectFit: "cover" }}/>
-          ) : (
-            <FaUserCircle size={200} />
+          <img 
+            src={`${API_URL}${imageUser}`} 
+            alt='Imagem do perfil' 
+            className='profile-picture'
+            style={{ width: 200, height: 200, borderRadius: "50%", objectFit: "cover" }}
+          />
+        ) : (
+          <FaUserCircle size={200} />
         )}
         <ul>
           <li>
@@ -62,13 +75,22 @@ function HomeUser() {
             <button>Deletar todos os seus posts</button>
           </li>
           <li>
-            <Logout></Logout>
+            <Logout />
           </li>
         </ul>
       </aside>
       
       {/* Área dos posts */}
       <main className="posts-section">
+        <button className="add-post" onClick={() => setIsAddPostOpen(true)}>Adicionar postagem</button>
+
+        <Modal isOpen={isAddPostOpen} onClose={() => setIsAddPostOpen(false)}>
+          <AddPostForm 
+            onClose={() => setIsAddPostOpen(false)} 
+            onPostCreated={(newPost) => setPosts((prev) => [newPost, ...prev])} 
+          />
+        </Modal>
+
         <h1>Posts</h1>
         
         {posts.length === 0 ? (
@@ -78,18 +100,18 @@ function HomeUser() {
             <div
               key={post.id}
               className="post-card"
-              style={{border: "1px solid #ccc", margin: "10px", padding: "10px"}}>
+              style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}
+            >
               <h2>{post.titlePost}</h2>
-               {post.imagePost && (
+              {post.imagePost && (
                 <img
                   src={`${API_URL}${post.imagePost}`}
                   alt={post.titlePost}
-                  style={{maxWidth: "200px", display: "block", marginTop: "10px"}}/>
+                  style={{ maxWidth: "200px", display: "block", marginTop: "10px" }}
+                />
               )}
               <p>{post.bodyPost}</p>
-              <small>
-                Criado em: {new Date(post.createdAt).toLocaleDateString()}
-              </small>
+              <small>Criado em: {new Date(post.createdAt).toLocaleDateString()}</small>
             </div>
           ))
         )}
@@ -99,4 +121,3 @@ function HomeUser() {
 }
 
 export default HomeUser;
-
