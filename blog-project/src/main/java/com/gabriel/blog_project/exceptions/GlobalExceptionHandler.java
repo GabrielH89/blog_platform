@@ -51,4 +51,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		);
 		return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler(NoPermissionToRate.class) 
+	public ResponseEntity<Object> handlePermissionDeniedToRateException(NoPermissionToRate ex) {
+		Map<String, Object> response = Map.of(
+				"timestamp", LocalDateTime.now(),
+				"status", HttpStatus.CONFLICT.value(),
+				"error", "You have no permission",
+				"message", ex.getMessage()
+		);
+		return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+	}
 }
