@@ -10,4 +10,5 @@ import com.gabriel.blog_project.entities.Rating;
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 	Optional<Rating> findByUserIdAndPostId(Long userId, Long postIid);
+	Optional<Rating> findByIdAndPostIdAndUserId(Long ratingId, Long postId, Long userId);
 }
