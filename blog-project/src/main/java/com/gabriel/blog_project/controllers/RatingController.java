@@ -26,7 +26,7 @@ public class RatingController {
 	public RatingController(RatingService ratingService) {
 		this.ratingService = ratingService;
 	}
-	
+		
 	@PostMapping
 	public ResponseEntity<ShowRatingDto> createRating(@PathVariable Long postId, @Valid @RequestBody CreateRatingDto createDto, 
 			HttpServletRequest request) {
