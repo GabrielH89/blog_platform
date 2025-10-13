@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import com.gabriel.blog_project.dtos.rating.CreateRatingDto;
 import com.gabriel.blog_project.dtos.rating.ShowRatingDto;
+import com.gabriel.blog_project.dtos.rating.UpdateRatingDto;
 import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.Post;
 import com.gabriel.blog_project.entities.Rating;
@@ -70,6 +71,28 @@ public class RatingService {
 		}
 		
 		ratingRepository.delete(rating);
+	}
+	
+	public ShowRatingDto updateRatingById(Long postId, Long ratingId, UpdateRatingDto updateDto, HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		userRepository.findById(userId)
+		.orElseThrow(() -> new RuntimeException("User not found"));
+
+		postRepository.findById(postId)
+		.orElseThrow(() -> new EmptyDatasException("Post not found"));
+		
+		var rating = ratingRepository.findByIdAndPostIdAndUserId(ratingId, postId, userId)
+				.orElseThrow(() -> new EmptyDatasException("Rating not found"));
+		
+		if (!Objects.equals(rating.getUser().getId(), userId)) {
+			throw new PermissionDeniedException("You have no permission to update this rating.");
+		}
+		
+		rating.setRating_value(updateDto.rating_value());
+		
+		ratingRepository.save(rating);
+		return new ShowRatingDto(rating.getId(), rating.getRating_value());
 	}
 }
 

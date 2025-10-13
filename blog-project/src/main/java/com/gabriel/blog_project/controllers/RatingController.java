@@ -4,12 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.blog_project.dtos.rating.CreateRatingDto;
 import com.gabriel.blog_project.dtos.rating.ShowRatingDto;
+import com.gabriel.blog_project.dtos.rating.UpdateRatingDto;
 import com.gabriel.blog_project.services.RatingService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +40,12 @@ public class RatingController {
 		return ResponseEntity.ok("Rating deleted with success");
 	}
 
+	@PutMapping("/{id}")
+	public ResponseEntity<ShowRatingDto> updateRatingById(@PathVariable Long id, @PathVariable Long postId,
+			@Valid @RequestBody UpdateRatingDto updateDto, HttpServletRequest request) {
+		ShowRatingDto ratingUpdated = ratingService.updateRatingById(postId, id, updateDto, request);
+		return ResponseEntity.status(200).body(ratingUpdated);
+	}
 }
 
 
