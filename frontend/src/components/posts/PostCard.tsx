@@ -1,4 +1,5 @@
-// src/components/PostCard.tsx
+import '../../styles/posts/PostCard.css';
+
 interface Post {
   id: number;
   titlePost: string;
@@ -15,19 +16,20 @@ interface PostCardProps {
 function PostCard({ post, onBack }: PostCardProps) {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  return (
+   return (
     <div className="post-detail">
-      <button onClick={onBack} style={{ marginBottom: "15px" }}>
+      <button onClick={onBack} style={{ marginBottom: "15px" }} className="btn-voltar">
         ← Voltar
       </button>
-      <h1>{post.titlePost}</h1>
-      {post.imagePost && (
-        <img
-          src={`${API_URL}${post.imagePost}`}
-          alt={post.titlePost}
-          style={{ maxWidth: "400px", marginTop: "10px" }}
-        />
-      )}
+
+      {/* Nova div para agrupar título e imagem */}
+      <div className="post-header">
+        <h1>{post.titlePost}</h1>
+        {post.imagePost && (
+          <img src={`${API_URL}${post.imagePost}`} alt={post.titlePost} />
+        )}
+      </div>
+
       <p>{post.bodyPost}</p>
       <small>Criado em: {new Date(post.createdAt).toLocaleDateString()}</small>
     </div>

@@ -20,7 +20,6 @@ function UserArea({ isSidebarOpen, toggleSidebar }: UserAreaProps) {
       </button>
 
       <aside className={`sidebar-user ${isSidebarOpen ? "open" : ""}`}>
-        <h2>Área do Usuário</h2>
         {imageUser ? (
           <img
             src={`${API_URL}${imageUser}`}
