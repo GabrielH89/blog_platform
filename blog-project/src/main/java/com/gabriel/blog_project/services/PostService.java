@@ -87,7 +87,7 @@ public class PostService {
 		userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 		
-		var posts = postRepository.findAll();
+		var posts = postRepository.findAllByOrderByCreatedAtDesc();
 		
 		if(posts.isEmpty()) {
 			throw new EmptyDatasException("No posts found");
