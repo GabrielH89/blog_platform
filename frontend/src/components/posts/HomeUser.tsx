@@ -92,9 +92,16 @@ function HomeUser() {
                     />
                   )}
                   <p>{post.bodyPost}</p>
+                  <div className="description-div">
                   <small>
                     Criado em: {new Date(post.createdAt).toLocaleDateString()}
                   </small>
+
+                  <small>
+                    Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}
+                  </small>
+                  </div>
+                  
                 </div>
               ))
             )}

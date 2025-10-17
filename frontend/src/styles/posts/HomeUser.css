@@ -134,6 +134,17 @@
   display: block;
 }
 
+.description-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.description-div small {
+  font-size: 1rem;
+  font-weight: bold;
+  display: block;
+}
+
 /* ===== Tablets ===== */
 @media (max-width: 1024px) {
   .sidebar-user {
