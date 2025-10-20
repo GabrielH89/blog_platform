@@ -20,6 +20,7 @@ import com.gabriel.blog_project.exceptions.EmptyDatasException;
 import com.gabriel.blog_project.exceptions.PermissionDeniedException;
 import com.gabriel.blog_project.repositories.PostRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
+import com.gabriel.blog_project.utils.FileUtils;
 
 import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -91,7 +92,7 @@ public class PostService {
 		
 		if(posts.isEmpty()) {
 			throw new EmptyDatasException("No posts found");
-		}
+		}		
 		
 		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(post.getId(), post.getTitlePost(), post.getBodyPost(), 
 				post.getImagePost(), post.getCreatedAt(), post.getUpdatedAt())).collect(Collectors.toList());
@@ -136,33 +137,28 @@ public class PostService {
 	}
 	
 	public void deleteAllPosts(HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		 if (user.getRole().equals("ADMIN")) {
-		        // ADMIN can delete all posts
-		        var posts = postRepository.findAll();
-		        if (posts.isEmpty()) {
-		            throw new EmptyDatasException("No posts found to delete");
-		        }
-		        postRepository.deleteAll(posts);
-		        return;
-		    }
+	    long userId = (Long) request.getAttribute("userId");
 
-		    // Common users: can only delete their own posts
-		    var userPosts = postRepository.findAll()
-		            .stream()
-		            .filter(post -> post.getUser().getId().equals(userId))
-		            .toList();
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
 
-		    if (userPosts.isEmpty()) {
-		        throw new EmptyDatasException("You have no posts to delete");
-		    }
+	    List<Post> postsToDelete;
 
-		
-		postRepository.deleteAll(userPosts);	
+	    if (user.getRole() == EnumRole.ADMIN) {
+	        postsToDelete = postRepository.findAll();
+	    } else {
+	        postsToDelete = postRepository.findAll().stream().filter(post -> post.getUser().getId().equals(userId)).collect(Collectors.toList());
+	    }
+
+	    if (postsToDelete.isEmpty()) {
+	        throw new EmptyDatasException("No posts found to delete");
+	    }
+
+	    FileUtils.deleteImages(
+	        postsToDelete.stream().map(Post::getImagePost).filter(Objects::nonNull).collect(Collectors.toList())
+	    );
+
+	    postRepository.deleteAll(postsToDelete);
 	}
 	
 	public void deletePostById(Long id, HttpServletRequest request) {
@@ -178,7 +174,6 @@ public class PostService {
 			 throw new PermissionDeniedException("You have no permission to delete this post");
 		}
 
-		 
 		postRepository.deleteById(id);
 	}
 	
