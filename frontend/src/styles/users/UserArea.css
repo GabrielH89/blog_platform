@@ -1,0 +1,36 @@
+
+.user-area-modal h2 {
+    color: black;
+    font-size: 1.4rem;
+}
+
+.user-area-modal p {
+    color: black;
+    font-size: 1.2rem;
+}
+
+.user-area-modal-btn {
+    display: flex;
+    justify-content: space-around;
+}
+
+.user-area-modal-btn button {
+    width: 100px;
+    height: 34px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+}
+
+.user-area-modal-btn .confirm-btn:hover {
+    background-color: green;
+    color: white;
+    transition: 0.3s;
+}
+
+.user-area-modal-btn .cancel-btn:hover {
+    background-color: firebrick;
+    color: white;
+    transition: 0.3s;
+}
+

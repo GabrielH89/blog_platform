@@ -1,6 +1,6 @@
 // src/pages/HomeUser.tsx
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "../../styles/posts/HomeUser.css";
 import AddPostForm from "./AddPostForm";
 import Modal from "../../utils/Modal";
@@ -24,27 +24,29 @@ function HomeUser() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const token = sessionStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/posts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setPosts(response.data);
-      } catch (error) {
-        console.log("Error: " + error);
-      }
-    };
-    fetchPosts();
+    const fetchPosts = useCallback(async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await axios.get(`${API_URL}/posts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPosts(response.data);
+    } catch (error) {
+      console.log("Erro ao buscar posts:", error);
+    }
   }, [API_URL]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   return (
     <div className="home-container">
       {/* Área do usuário importada */}
       <UserArea 
+        onDeleteAllPosts={fetchPosts}
         isSidebarOpen={isSidebarOpen} 
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
       />
