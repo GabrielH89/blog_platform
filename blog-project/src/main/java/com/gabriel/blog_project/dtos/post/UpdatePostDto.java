@@ -1,7 +1,7 @@
 package com.gabriel.blog_project.dtos.post;
 
-import java.time.LocalDateTime;
+import org.springframework.web.multipart.MultipartFile;
 
-public record UpdatePostDto(String titlePost, String bodyPost, String imagePost, LocalDateTime updatedAt) {
+public record UpdatePostDto(String titlePost, String bodyPost, MultipartFile imagePost) {
 
 }
