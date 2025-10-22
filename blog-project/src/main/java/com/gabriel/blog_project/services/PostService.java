@@ -3,6 +3,7 @@ package com.gabriel.blog_project.services;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -174,36 +175,73 @@ public class PostService {
 			 throw new PermissionDeniedException("You have no permission to delete this post");
 		}
 
+		if(post.getImagePost() != null) {
+			FileUtils.deleteImages(List.of(post.getImagePost()));
+		}
+		
 		postRepository.deleteById(id);
 	}
 	
 	public ShowPostDto updatePostById(Long id, UpdatePostDto updateDto, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		Post post = postRepository.findById(id)
-			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
-		 
-		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
+	    long userId = (Long) request.getAttribute("userId");
+
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    Post post = postRepository.findById(id)
+	            .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+
+	    if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
 	        throw new PermissionDeniedException("You have no permission to update this post");
 	    }
-		
-		post.setTitlePost(updateDto.titlePost());
-		post.setBodyPost(updateDto.bodyPost());
-		post.setImagePost(updateDto.imagePost());
-		post.setUpdatedAt(updateDto.updatedAt());
-		
-		postRepository.save(post);
-		
-		 return new ShowPostDto(
-		            post.getId(),
-		            post.getTitlePost(),
-		            post.getBodyPost(),
-		            post.getImagePost(),
-		            post.getCreatedAt(),
-		            post.getUpdatedAt()
-		    );
+
+	    MultipartFile newImageFile = updateDto.imagePost();
+	    String newFileName = null;
+	    String newFileUrl = null;
+
+	    // 🖼️ Se o usuário enviou uma nova imagem
+	    if (newImageFile != null && !newImageFile.isEmpty()) {
+	        // Deleta a imagem antiga, se existir
+	        if (post.getImagePost() != null) {
+	            FileUtils.deleteImages(List.of(post.getImagePost()));
+	        }
+
+	        // Gera novo nome e caminho
+	        newFileName = System.currentTimeMillis() + "_" + newImageFile.getOriginalFilename();
+	        Path uploadPath = Paths.get("uploads").toAbsolutePath();
+
+	        try {
+	            Files.createDirectories(uploadPath);
+	            Path filePath = uploadPath.resolve(newFileName);
+	            newImageFile.transferTo(filePath.toFile());
+	            newFileUrl = "/uploads/" + newFileName;
+	        } catch (IOException e) {
+	            throw new RuntimeException("Erro ao salvar nova imagem", e);
+	        }
+
+	        post.setImagePost(newFileUrl);
+	    }
+
+	    // 📝 Atualiza título e corpo
+	    if (updateDto.titlePost() != null)
+	        post.setTitlePost(updateDto.titlePost());
+
+	    if (updateDto.bodyPost() != null)
+	        post.setBodyPost(updateDto.bodyPost());
+
+	    // Atualiza a data
+	    post.setUpdatedAt(LocalDateTime.now());
+
+	    postRepository.save(post);
+
+	    return new ShowPostDto(
+	        post.getId(),
+	        post.getTitlePost(),
+	        post.getBodyPost(),
+	        post.getImagePost(),
+	        post.getCreatedAt(),
+	        post.getUpdatedAt()
+	    );
 	}
+
 }
