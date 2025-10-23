@@ -1,4 +1,3 @@
-// src/pages/HomeUser.tsx
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import "../../styles/posts/HomeUser.css";
@@ -6,6 +5,7 @@ import AddPostForm from "./AddPostForm";
 import Modal from "../../utils/Modal";
 import UserArea from "../users/UserArea";
 import PostCard from "./PostCard";
+import PostItem from "./PostItem";
 
 interface Post {
   id: number;
@@ -24,7 +24,7 @@ function HomeUser() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const API_URL = import.meta.env.VITE_API_URL;
 
-    const fetchPosts = useCallback(async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await axios.get(`${API_URL}/posts`, {
@@ -42,18 +42,22 @@ function HomeUser() {
     fetchPosts();
   }, [fetchPosts]);
 
+  // Função chamada quando um post é deletado
+  const handlePostDeleted = (id: number) => {
+    setPosts((prev) => prev.filter((post) => post.id !== id));
+  };
+
   return (
     <div className="home-container">
-      {/* Área do usuário importada */}
-      <UserArea 
+      {/* Área do usuário */}
+      <UserArea
         onDeleteAllPosts={fetchPosts}
-        isSidebarOpen={isSidebarOpen} 
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       {/* Área principal */}
       <main className="posts-section">
-        {/* Se um post foi selecionado, mostra o conteúdo completo */}
         {selectedPost ? (
           <PostCard post={selectedPost} onBack={() => setSelectedPost(null)} />
         ) : (
@@ -62,42 +66,31 @@ function HomeUser() {
               Adicionar postagem
             </button>
 
-            <Modal isOpen={isAddPostOpen} onClose={() => setIsAddPostOpen(false)}>
-              <AddPostForm 
-                onClose={() => setIsAddPostOpen(false)} 
-                onPostCreated={(newPost) => setPosts((prev) => [newPost, ...prev])} 
+            <Modal
+              isOpen={isAddPostOpen}
+              onClose={() => setIsAddPostOpen(false)}
+            >
+              <AddPostForm
+                onClose={() => setIsAddPostOpen(false)}
+                onPostCreated={(newPost) =>
+                  setPosts((prev) => [newPost, ...prev])
+                }
               />
             </Modal>
 
             <h1>Posts</h1>
+
             {posts.length === 0 ? (
               <p>Nenhum post encontrado</p>
             ) : (
               posts.map((post) => (
-                <div
+                <PostItem
                   key={post.id}
-                  className="post-card"
-                  onClick={() => setSelectedPost(post)} // <- abre o post
-                >
-                  <h2>{post.titlePost}</h2>
-                  {post.imagePost && (
-                    <img 
-                      src={`${API_URL}${post.imagePost}`}
-                      alt={post.titlePost}
-                    />
-                  )}
-                  <p>{post.bodyPost}</p>
-                  <div className="description-div">
-                  <small>
-                    Criado em: {new Date(post.createdAt).toLocaleDateString()}
-                  </small>
-
-                  <small>
-                    Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}
-                  </small>
-                  </div>
-                  
-                </div>
+                  post={post}
+                  API_URL={API_URL}
+                  onClick={() => setSelectedPost(post)}
+                  onDeleted={handlePostDeleted}
+                />
               ))
             )}
           </>
