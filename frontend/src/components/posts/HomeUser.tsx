@@ -78,19 +78,12 @@ function HomeUser() {
                   key={post.id}
                   className="post-card"
                   onClick={() => setSelectedPost(post)} // <- abre o post
-                  style={{
-                    border: "1px solid #ccc",
-                    margin: "10px",
-                    padding: "10px",
-                    cursor: "pointer",
-                  }}
                 >
                   <h2>{post.titlePost}</h2>
                   {post.imagePost && (
-                    <img
+                    <img 
                       src={`${API_URL}${post.imagePost}`}
                       alt={post.titlePost}
-                      style={{ maxWidth: "200px", display: "block", marginTop: "10px" }}
                     />
                   )}
                   <p>{post.bodyPost}</p>
