@@ -6,7 +6,6 @@ target/
 
 #Arquivos de confiração sensíveis
 .env
-.env.example
 
 #Diretórios privados
 /uploads
