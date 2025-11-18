@@ -1,5 +1,6 @@
-import { FaTrash } from "react-icons/fa";
+import { FaEdit, FaStar, FaTrash } from "react-icons/fa";
 import axios from "axios";
+import '../../styles/posts/PostItem.css';
 
 interface Post {
   id: number;
@@ -19,6 +20,7 @@ interface PostItemProps {
 }
 
 function PostItem({ post, API_URL, onClick, onDeleted }: PostItemProps) {
+
   const deletePostById = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Evita abrir o post ao clicar no ícone
 
@@ -28,20 +30,32 @@ function PostItem({ post, API_URL, onClick, onDeleted }: PostItemProps) {
       const token = sessionStorage.getItem("token");
       await axios.delete(`${API_URL}/posts/${post.id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
       onDeleted(post.id);
     } catch (error) {
       console.error("Error to delete post", error);
     }
+
   };
 
   return (
     <div className="post-card" onClick={onClick}>
-      {/* Ícone de lixeira no canto superior direito */}
-      <FaTrash className="delete-icon" onClick={deletePostById} />
+      
+      <div className="icons-div">
+        <span className="icon-wrapper delete-icon">
+    <FaTrash onClick={deletePostById}/>
+  </span>
 
+  <span className="icon-wrapper edit-icon">
+    <FaEdit />
+  </span>
+    <span className="icon-wrapper star-icon">
+    <FaStar />
+  </span>
+      </div>
+      
       <h2>{post.titlePost}</h2>
       {post.imagePost && (
         <img src={`${API_URL}${post.imagePost}`} alt={post.titlePost} />

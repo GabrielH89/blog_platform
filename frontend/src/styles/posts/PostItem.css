@@ -1,0 +1,81 @@
+.icons-div {
+    display: flex;
+    gap: 16px;
+}
+
+.icon-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: inline-flex;
+}
+
+/* DELETE */
+.delete-icon {
+    color: red;
+}
+
+.delete-icon:hover {
+    color: firebrick;
+}
+
+.delete-icon:hover::after {
+    content: "Deletar";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    z-index: 20;
+}
+
+/* EDIT */
+.edit-icon {
+    color: blue;
+}
+
+.edit-icon:hover {
+    color: darkblue;
+}
+
+.edit-icon:hover::after {
+   content: "Editar";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    z-index: 20;
+}
+
+.star-icon {
+    color: yellow;
+}
+
+.star-icon:hover {
+    color: gold;
+}
+
+.star-icon:hover::after {
+   content: "Avaliar";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    z-index: 20;
+}
