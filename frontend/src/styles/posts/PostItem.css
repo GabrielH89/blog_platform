@@ -16,6 +16,7 @@
 
 .delete-icon:hover {
     color: firebrick;
+    transform: scale(1.3);
 }
 
 .delete-icon:hover::after {
@@ -40,6 +41,7 @@
 
 .edit-icon:hover {
     color: darkblue;
+    transform: scale(1.3);
 }
 
 .edit-icon:hover::after {
@@ -63,6 +65,7 @@
 
 .star-icon:hover {
     color: gold;
+    transform: scale(1.3);
 }
 
 .star-icon:hover::after {
