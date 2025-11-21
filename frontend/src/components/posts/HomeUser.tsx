@@ -47,6 +47,10 @@ function HomeUser() {
     setPosts((prev) => prev.filter((post) => post.id !== id));
   };
 
+  const handlePostEdited = (updatedPost: Post) => {
+    setPosts((prev) => prev.map((p) => (p.id === updatedPost.id ? updatedPost : p)));
+  };
+
   return (
     <div className="home-container">
       {/* Área do usuário */}
@@ -90,6 +94,7 @@ function HomeUser() {
                   API_URL={API_URL}
                   onClick={() => setSelectedPost(post)}
                   onDeleted={handlePostDeleted}
+                  onEdited={handlePostEdited}
                 />
               ))
             )}
