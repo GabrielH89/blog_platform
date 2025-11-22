@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import LoadingModal from "../../utils/LoadingModal";
 import axios from "axios";
+import '../../styles/posts/EditPostForm.css';
 
 interface Post {
   id: number;
@@ -120,8 +121,8 @@ function EditPost({ post, onClose, onPostEdited }: EditPostProps) {
 
         {errorMessage && <p className="error">{errorMessage}</p>}
 
-        <div className="div-add-btn">
-          <button className="add-btn" type="submit">
+        <div className="div-edit-btn">
+          <button className="edit-btn" type="submit">
             Atualizar
           </button>
         </div>

@@ -3,9 +3,12 @@
 
 /* Botão de fechar */
 .close-button {
-  position: absolute;
+  position: relative;
   top: 0px;
-  right: 1px;
+  right: 8px;
+  margin-top: -31px;
+  margin-right: -40px;
+  border-radius: 2px;
   background: transparent;
   border: none;
   font-size: 20px;
@@ -35,9 +38,9 @@
 }
 
 /* Inputs e Textarea */
-.addCredentialForm input[type="text"],
-.addCredentialForm input[type="file"],
-.addCredentialForm textarea {
+.addPostForm input[type="text"],
+.addPostForm input[type="file"],
+.addPostForm textarea {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -46,13 +49,13 @@
   transition: border 0.2s;
 }
 
-.addCredentialForm input[type="text"]:focus,
-.addCredentialForm textarea:focus {
+.addPostForm input[type="text"]:focus,
+.addPostForm textarea:focus {
   border: 1px solid #007bff;
 }
 
 /* Textarea */
-.addCredentialForm textarea {
+.addPostForm textarea {
   resize: vertical;
   min-height: 100px;
 }

@@ -75,7 +75,7 @@ function AddPostForm({ onClose, onPostCreated }: AddPostProps) {
     <div>
       {isLoading && <LoadingModal />}
       <button type="button" onClick={onClose} className="close-button">X</button>
-      <form className="addCredentialForm" onSubmit={addPost}>
+      <form className="addPostForm" onSubmit={addPost}>
         <div className="formGroup">
           <label>Título do post:</label>
           <input 
