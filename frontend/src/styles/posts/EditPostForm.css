@@ -1,0 +1,83 @@
+/* Container principal do formulário */
+
+/* Agrupamento dos inputs */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 30px;
+}
+
+/* Inputs e Textarea */
+.editPostForm input[type="text"],
+.editPostForm input[type="file"],
+.editPostForm textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.editPostForm input[type="text"]:focus,
+.editPostForm textarea:focus {
+  border: 1px solid #007bff;
+}
+
+/* Textarea */
+.editPostForm textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Preview da imagem */
+.image-preview {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+  object-fit: cover;
+}
+
+/* Mensagem de erro */
+.error {
+  color: #e74c3c;
+  font-size: 14px;
+  text-align: center;
+  margin: 8px 0;
+}
+
+/* Botão de envio */
+.div-edit-btn {
+  display: flex;
+  justify-content: center;
+}
+
+.edit-btn {
+  background: #007bff;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
