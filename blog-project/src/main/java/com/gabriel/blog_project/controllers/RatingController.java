@@ -2,6 +2,7 @@ package com.gabriel.blog_project.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,24 +29,31 @@ public class RatingController {
 	}
 		
 	@PostMapping
-	public ResponseEntity<ShowRatingDto> createRating(@PathVariable Long postId, @Valid @RequestBody CreateRatingDto createDto, 
-			HttpServletRequest request) {
-		ShowRatingDto newRating = ratingService.createRating(postId, request, createDto);
-		return ResponseEntity.status(201).body(newRating);
-	}
-	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteRatingById(@PathVariable Long id, @PathVariable Long postId, HttpServletRequest request) {
-		ratingService.deleteRatingById(postId, id, request);
-		return ResponseEntity.ok("Rating deleted with success");
-	}
+    public ResponseEntity<ShowRatingDto> createRating(@PathVariable Long postId, @Valid @RequestBody CreateRatingDto createDto,
+    		HttpServletRequest request) {
+        ShowRatingDto newRating = ratingService.createRating(postId, request, createDto);
+        return ResponseEntity.status(201).body(newRating);
+    }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<ShowRatingDto> updateRatingById(@PathVariable Long id, @PathVariable Long postId,
-			@Valid @RequestBody UpdateRatingDto updateDto, HttpServletRequest request) {
-		ShowRatingDto ratingUpdated = ratingService.updateRatingById(postId, id, updateDto, request);
-		return ResponseEntity.status(200).body(ratingUpdated);
-	}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteRatingById(@PathVariable Long postId, @PathVariable Long id, HttpServletRequest request) {
+        ratingService.deleteRatingById(postId, id, request);
+        return ResponseEntity.ok("Rating deleted successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ShowRatingDto> updateRatingById(@PathVariable Long postId, @PathVariable Long id, @Valid 
+    		@RequestBody UpdateRatingDto updateDto, HttpServletRequest request) {
+        ShowRatingDto updated = ratingService.updateRatingById(postId, id, updateDto, request);
+        return ResponseEntity.ok(updated);
+    }
+    
+    @GetMapping("/user")
+    public ResponseEntity<ShowRatingDto> getUserRating(@PathVariable Long postId, HttpServletRequest request) {
+        ShowRatingDto rating = ratingService.getUserRating(postId, request);
+        return ResponseEntity.ok(rating);
+    }
+
 }
 
 

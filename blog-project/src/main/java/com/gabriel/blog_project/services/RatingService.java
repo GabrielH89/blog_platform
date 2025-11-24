@@ -121,6 +121,16 @@ public class RatingService {
 		ratingRepository.save(rating);
 		return new ShowRatingDto(rating.getId(), rating.getRating_value());
 	}
+	
+	public ShowRatingDto getUserRating(Long postId, HttpServletRequest request) {
+	    long userId = (Long) request.getAttribute("userId");
+
+	    var rating = ratingRepository.findByUserIdAndPostId(userId, postId)
+	            .orElseThrow(() -> new EmptyDatasException("Rating not found"));
+
+	    return new ShowRatingDto(rating.getId(), rating.getRating_value());
+	}
+
 }
 
 
