@@ -4,6 +4,7 @@ import "../../styles/posts/PostItem.css";
 import EditPost from "./EditPost";
 import { useState } from "react";
 import Modal from "../../utils/Modal";
+import CreateRating from "../ratings/CreateRating";
 
 interface Post {
   id: number;
@@ -27,6 +28,8 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
+  const [showRatingModal, setShowRatingModal] = useState(false);
+
   const deletePostById = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -36,13 +39,10 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
       const token = sessionStorage.getItem("token");
 
       await axios.delete(`${API_URL}/posts/${post.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       onDeleted(post.id);
-
     } catch (error) {
       console.error("Error to delete post", error);
     }
@@ -56,35 +56,49 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
 
   const closeEditModal = () => {
     setShowEditModal(false);
-    setEditingPost(null); // <- ESSA LINHA É ESSENCIAL
+    setEditingPost(null);
   };
 
   return (
     <>
+      {/* MODAL EDITAR */}
       {showEditModal && editingPost && (
         <Modal isOpen={showEditModal} onClose={closeEditModal}>
           <EditPost
             post={editingPost}
             onClose={closeEditModal}
             onPostEdited={(updatedPost) => {
-              onEdited(updatedPost); // Atualiza no pai
+              onEdited(updatedPost);
               closeEditModal();
             }}
           />
         </Modal>
       )}
 
+      {/* MODAL RATING */}
+      {showRatingModal && (
+        <Modal isOpen={showRatingModal} onClose={() => setShowRatingModal(false)}>
+          <CreateRating
+            postId={post.id}
+            API_URL={API_URL}
+            onClose={() => setShowRatingModal(false)}
+          />
+        </Modal>
+      )}
+
       <div className="post-card" onClick={onClick}>
         <div className="icons-div">
-          <FaTrash
-            onClick={deletePostById}
-            className="icon-wrapper delete-icon"
+          <FaTrash className="icon-wrapper delete-icon" onClick={deletePostById} />
+          <FaEdit className="icon-wrapper edit-icon" onClick={openEditModal} />
+
+          {/* Ícone de avaliação */}
+          <FaStar
+            className="icon-wrapper star-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowRatingModal(true);
+            }}
           />
-          <FaEdit
-            onClick={openEditModal}
-            className="icon-wrapper edit-icon"
-          />
-          <FaStar className="icon-wrapper star-icon" />
         </div>
 
         <h2>{post.titlePost}</h2>
@@ -96,12 +110,8 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
         <p>{post.bodyPost}</p>
 
         <div className="description-div">
-          <small>
-            Criado em: {new Date(post.createdAt).toLocaleDateString()}
-          </small>
-          <small>
-            Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}
-          </small>
+          <small>Criado em: {new Date(post.createdAt).toLocaleDateString()}</small>
+          <small>Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}</small>
         </div>
       </div>
     </>
