@@ -5,6 +5,7 @@ import EditPost from "./EditPost";
 import { useState } from "react";
 import Modal from "../../utils/Modal";
 import CreateRating from "../ratings/CreateRating";
+import RatingDisplay from "../ratings/RatingDisplay";
 
 interface Post {
   id: number;
@@ -100,6 +101,8 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
             }}
           />
         </div>
+
+        <RatingDisplay postId={post.id} API_URL={API_URL}></RatingDisplay>
 
         <h2>{post.titlePost}</h2>
 
