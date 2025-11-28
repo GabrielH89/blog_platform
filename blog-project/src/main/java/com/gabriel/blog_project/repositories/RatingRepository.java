@@ -1,5 +1,6 @@
 package com.gabriel.blog_project.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import com.gabriel.blog_project.entities.Rating;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 	Optional<Rating> findByUserIdAndPostId(Long userId, Long postIid);
 	Optional<Rating> findByIdAndPostIdAndUserId(Long ratingId, Long postId, Long userId);
+	List<Rating> findByPostId(Long postId);
 }

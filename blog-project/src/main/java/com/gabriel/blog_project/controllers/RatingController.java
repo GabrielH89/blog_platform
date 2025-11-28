@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.blog_project.dtos.rating.CreateRatingDto;
+import com.gabriel.blog_project.dtos.rating.RatingAverageDto;
 import com.gabriel.blog_project.dtos.rating.ShowRatingDto;
 import com.gabriel.blog_project.dtos.rating.UpdateRatingDto;
 import com.gabriel.blog_project.services.RatingService;
@@ -53,7 +54,12 @@ public class RatingController {
         ShowRatingDto rating = ratingService.getUserRating(postId, request);
         return ResponseEntity.ok(rating);
     }
-
+    
+    @GetMapping("/average")
+    public ResponseEntity<RatingAverageDto> calculateAverageRating(@PathVariable Long postId, HttpServletRequest request) {
+    	RatingAverageDto ratingAverage = ratingService.calculateAverageRating(postId, request);
+    	return ResponseEntity.ok(ratingAverage);
+    }
 }
 
 
