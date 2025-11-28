@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
 import com.gabriel.blog_project.dtos.rating.CreateRatingDto;
+import com.gabriel.blog_project.dtos.rating.RatingAverageDto;
 import com.gabriel.blog_project.dtos.rating.ShowRatingDto;
 import com.gabriel.blog_project.dtos.rating.UpdateRatingDto;
 import com.gabriel.blog_project.entities.EnumRole;
@@ -129,6 +130,21 @@ public class RatingService {
 	            .orElseThrow(() -> new EmptyDatasException("Rating not found"));
 
 	    return new ShowRatingDto(rating.getId(), rating.getRating_value());
+	}
+	
+	public RatingAverageDto calculateAverageRating(Long postId, HttpServletRequest request) {
+		   List<Rating> ratings = ratingRepository.findByPostId(postId);
+
+		    if (ratings.isEmpty()) {
+		        return new RatingAverageDto(0, 0);
+		    }
+
+		    // Soma todos os valores de rating
+		    double sum = ratings.stream().mapToDouble(Rating::getRating_value) .sum();
+
+		    double average = sum / ratings.size();
+
+		    return new RatingAverageDto(ratings.size(), average);
 	}
 
 }
