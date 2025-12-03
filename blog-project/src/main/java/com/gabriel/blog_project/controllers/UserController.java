@@ -25,7 +25,7 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@DeleteMapping
+	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteAccount(HttpServletRequest request) {
 		userService.deleteAccount(request);
 		return ResponseEntity.noContent().build();

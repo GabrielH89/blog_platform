@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Modal from '../../utils/Modal';
 import UpdateDatas from './UpdateDatas';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const {userName, userLogin, imageUser} = useUserData();
@@ -13,7 +14,9 @@ function Profile() {
   const optionsRef = useRef<HTMLDivElement>(null);
   const [showFullImage, setShowFullImage] = useState(false);
   const [isUpdateDatasOpen, setIsUpdateDatasOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
   const handleImageClick = () => {
     setShowOptions((prev) => !prev);
@@ -72,6 +75,22 @@ function Profile() {
             console.error("Error to update image:", error);
         }
     }
+  }
+
+  const deleteAccount = async () => {
+    try{
+        const token = sessionStorage.getItem("token");
+        const userId = sessionStorage.getItem("userId");
+        await axios.delete(`${API_URL}/users/${userId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    navigate("/");
+    }catch(error) {
+        console.log("Error: " + error);
+    }
+   
   }
 
    useEffect(() => {
@@ -135,10 +154,26 @@ function Profile() {
                 <button className="update-account-btn" onClick={() => setIsUpdateDatasOpen(true)}>
                     Atualizar dados
                 </button>
-                <Modal isOpen={isUpdateDatasOpen} onClose={() => setIsUpdateDatasOpen(false)}>
-                    <UpdateDatas onClose={() => setIsUpdateDatasOpen(false)} />
+                <Modal isOpen={isDeleteConfirmOpen} onClose={() => setIsDeleteConfirmOpen(false)}>
+                <div>
+                    <h3>Tem certeza que deseja excluir sua conta?</h3>
+                    <p>Essa ação não pode ser desfeita.</p>
+
+                    <div>
+                    <button onClick={async () => {await deleteAccount(); setIsDeleteConfirmOpen(false);}}>
+                        Sim, excluir
+                    </button>
+
+                    <button onClick={() => setIsDeleteConfirmOpen(false)}>
+                        Cancelar
+                    </button>
+                    </div>
+                </div>
                 </Modal>
-                <button className="delete-account-btn">Deletar conta</button>
+
+                <button className="delete-account-btn" onClick={() => setIsDeleteConfirmOpen(true)}>
+                    Deletar conta
+                </button>
             </div>
 
              {/* Modal para exibir a imagem em tela cheia */}
