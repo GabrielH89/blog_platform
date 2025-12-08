@@ -1,3 +1,272 @@
-body {
+/* ================================
+   CONTAINER GERAL
+=================================== */
+.personal-profile {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.personal-profile h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* ================================
+   FOTO DO PERFIL
+=================================== */
+.profile-icon {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-picture,
+.profile-icon svg {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform .2s ease-in-out;
+}
+
+.profile-picture:hover,
+.profile-icon svg:hover {
+    transform: scale(1.03);
+}
+
+/* Ícone de editar abaixo da imagem */
+.edit-icon-below {
+    display: flex;
+    justify-content: center;
+    margin-top: -10px;
+}
+
+.fa-pen {
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: #555;
+    transition: color .2s ease-in-out;
+}
+
+.fa-pen:hover {
+    color: #000;
+}
+
+/* ================================
+   MENU DE EDIÇÃO DA IMAGEM
+=================================== */
+.edit-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #ffffff;
+    padding: 12px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: -10px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    animation: fadeIn .2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.edit-options button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background .2s ease-in-out;
+}
+
+.edit-options button:hover {
+    background: #e0e0e0;
+}
+
+/* ================================
+   INPUTS
+=================================== */
+.personal-profile label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.personal-profile input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    font-size: 1rem;
+    outline: none;
+}
+
+.personal-profile input:disabled {
+    color: #555;
+}
+
+/* ================================
+   BOTÕES (ATUALIZAR E DELETAR)
+=================================== */
+.div-personal-profile-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.update-account-btn,
+.delete-account-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+/* Botão atualizar */
+.update-account-btn {
+    background: #4b7bec;
     color: white;
+}
+
+.update-account-btn:hover {
+    background: #3867d6;
+}
+
+/* Botão deletar conta */
+.delete-account-btn {
+    background: #eb3b5a;
+    color: white;
+}
+
+.delete-account-btn:hover {
+    background: #d63031;
+}
+
+/* ================================
+   IMAGEM EM TELA CHEIA
+=================================== */
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.fullscreen-image {
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    animation: fadeIn .2s ease-in-out;
+}
+
+.modal-update-account label {
+    font-size: 1.4rem;
+}
+
+.modal-update-account input {
+    height: 30px;
+    width: 90%;
+}
+
+.modal-update-account button {
+    cursor: pointer;
+    background-color: #4b7bec;
+    border: none;
+    color: white;
+    width: 350px;
+    font: bold;
+    font-size: 1.3rem;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.modal-update-account button:hover {
+    background-color: #3867d6;
+}
+
+.modal-delete-account h3 {
+    color: black;
+}
+
+.modal-delete-account p {
+    color: black;
+}
+
+.modal-delete-account button {
+    width: 200px;
+    height: 30px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    cursor: pointer;
+}
+
+.div-btn-delete-account {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.btn-delete-account {
+   background: #eb3b5a;
+}
+
+.btn-delete-account:hover {
+    background: #d63031;
+}
+
+.btn-delete-account-cancel {
+    background: #A9A9A9;
+}
+
+.btn-delete-account-cancel:hover {
+    background: gray;
+}
+
+/* ================================
+   MOBILE RESPONSIVO
+=================================== */
+@media (max-width: 480px) {
+    .personal-profile {
+        padding: 20px;
+    }
+
+    .profile-picture,
+    .profile-icon svg {
+        width: 150px;
+        height: 150px;
+    }
+
+    .update-account-btn,
+    .delete-account-btn {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
 }
