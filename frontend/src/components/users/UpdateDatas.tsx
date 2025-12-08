@@ -8,7 +8,7 @@ interface UpdateDatasProps {
 }
 
 function UpdateDatas({onClose}: UpdateDatasProps) {
-    const {userName, login} = useUserData();
+    const {userName, userLogin} = useUserData();
     const [userNameData, setUserNameData] = useState("");
     const [userLoginData, setUserLoginData] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -17,8 +17,8 @@ function UpdateDatas({onClose}: UpdateDatasProps) {
 
     useEffect(() => {
         setUserNameData(userName);
-        setUserLoginData(login);
-    }, [userName, login]);
+        setUserLoginData(userLogin);
+    }, [userName, userLogin]);
 
     const updateDatasUser = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,14 +26,17 @@ function UpdateDatas({onClose}: UpdateDatasProps) {
         setErrorMessage("");
 
         try{
-            const userData = {username: userNameData, login: userLoginData};
+            const formData = new FormData();
+            formData.append("username", userNameData);
+            formData.append("login", userLoginData);
+
             const token = sessionStorage.getItem("token");
 
             if(!token) {
                 throw new Error("Usuário não autenticado");
             }
 
-            const response = await axios.put(`${API_URL}/users`, userData, {
+            const response = await axios.put(`${API_URL}/users`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data"

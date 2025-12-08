@@ -154,19 +154,28 @@ function Profile() {
                 <button className="update-account-btn" onClick={() => setIsUpdateDatasOpen(true)}>
                     Atualizar dados
                 </button>
+               <Modal isOpen={isUpdateDatasOpen} onClose={() => setIsUpdateDatasOpen(false)} >
+                <div className='modal-update-account'>
+                    <UpdateDatas onClose={() => setIsUpdateDatasOpen(false)} />
+                </div>
+                </Modal>
                 <Modal isOpen={isDeleteConfirmOpen} onClose={() => setIsDeleteConfirmOpen(false)}>
-                <div>
+                <div className='modal-delete-account'>
                     <h3>Tem certeza que deseja excluir sua conta?</h3>
                     <p>Essa ação não pode ser desfeita.</p>
 
                     <div>
-                    <button onClick={async () => {await deleteAccount(); setIsDeleteConfirmOpen(false);}}>
+                    <div className='div-btn-delete-account'>
+                        <button onClick={async () => {await deleteAccount(); setIsDeleteConfirmOpen(false);}} 
+                        className='btn-delete-account'>
                         Sim, excluir
                     </button>
 
-                    <button onClick={() => setIsDeleteConfirmOpen(false)}>
+                    <button onClick={() => setIsDeleteConfirmOpen(false)} className='btn-delete-account-cancel'>
                         Cancelar
-                    </button>
+                    </button>    
+                    </div>
+                    
                     </div>
                 </div>
                 </Modal>
