@@ -1,36 +1,176 @@
-
+/* --- estilo geral do modal (mantive o seu) --- */
 .user-area-modal h2 {
-    color: black;
-    font-size: 1.4rem;
+  color: black;
+  font-size: 1.4rem;
 }
 
 .user-area-modal p {
-    color: black;
-    font-size: 1.2rem;
+  color: black;
+  font-size: 1.2rem;
 }
 
 .user-area-modal-btn {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .user-area-modal-btn button {
-    width: 100px;
-    height: 34px;
-    font-size: 1rem;
-    cursor: pointer;
-    border: none;
+  width: 100px;
+  height: 34px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
 }
 
 .user-area-modal-btn .confirm-btn:hover {
-    background-color: green;
-    color: white;
-    transition: 0.3s;
+  background-color: green;
+  color: white;
+  transition: 0.3s;
 }
 
 .user-area-modal-btn .cancel-btn:hover {
-    background-color: firebrick;
-    color: white;
-    transition: 0.3s;
+  background-color: firebrick;
+  color: white;
+  transition: 0.3s;
 }
 
+
+/* --------------------------
+   LAYOUT PADRÃO (desktop)
+   -------------------------- */
+.sidebar-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 260px;              
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sidebar-user img,
+.sidebar-user svg {
+  display: block;
+  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* lista */
+.sidebar-user ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar-user li {
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* botões/links dentro da sidebar */
+.sidebar-user .dropdown-button,
+.sidebar-user button {
+  display: inline-block;
+  padding: 10px 12px;
+  text-decoration: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;                
+  z-index: 1100;           
+}
+
+
+/* --------------------------
+   RESPONSIVO: telas pequenas
+   A sidebar vira um painel fixado no topo,
+   centralizado horizontalmente, com rolagem interna
+   se o conteúdo exceder a altura da viewport.
+   -------------------------- */
+@media (max-width: 768px) {
+  .sidebar-user {
+    display: none;
+  }
+
+  .sidebar-user.open {
+    display: flex;                     
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 420px;
+    padding: 16px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 1200;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* foto menor e centralizada */
+  .sidebar-user img,
+  .sidebar-user svg {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto 14px auto;
+  }
+
+  /* itens ocupam toda a largura do painel e ficam centralizados */
+  .sidebar-user ul {
+    width: 100%;
+  }
+
+  .sidebar-user li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar-user .dropdown-button,
+  .sidebar-user button {
+    width: 92%;
+    max-width: 360px;
+    padding: 10px 14px;
+    color: black;
+    font-weight: bold;
+  }
+}
+
+/* --------------------------
+   Telas muito pequenas
+   -------------------------- */
+@media (max-width: 450px) {
+  .sidebar-user {
+    top: 8px;
+    width: calc(100% - 16px);
+    max-width: 380px;
+    padding: 12px;
+  }
+
+  .sidebar-user img,
+  .sidebar-user svg {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .sidebar-user .dropdown-button,
+  .sidebar-user button {
+    width: 96%;
+    font-size: 0.95rem;
+  }
+}

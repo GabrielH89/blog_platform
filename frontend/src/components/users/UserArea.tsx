@@ -20,7 +20,7 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
   const API_URL = import.meta.env.VITE_API_URL;
 
   const deleteAllPosts = async () => {
-    try{
+    try {
       setLoading(true);
       const token = sessionStorage.getItem('token');
       await axios.delete(`${API_URL}/posts`, {
@@ -30,9 +30,9 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
       });
       onDeleteAllPosts();
       setIsConfirmModalOpen(false);
-    }catch(error) {
+    } catch (error) {
       console.log("Error: " + error);
-    }finally {
+    } finally {
       setLoading(false);
     }
   }
@@ -43,10 +43,18 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
         {isSidebarOpen ? "✖" : "☰"}
       </button>
 
+      {isSidebarOpen && (
+        <div className="sidebar-overlay" onClick={toggleSidebar}></div>
+      )}
+
       <aside className={`sidebar-user ${isSidebarOpen ? "open" : ""}`}>
+
         {imageUser ? (
-          <img src={`${API_URL}${imageUser}`} alt="Imagem do perfil" className="profile-picture"
-            style={{ width: 200, height: 200, borderRadius: "50%", objectFit: "cover" }}
+          <img
+            src={`${API_URL}${imageUser}`}
+            alt="Imagem do perfil" className="profile-picture"
+            style={{width: 200, height: 200, borderRadius: "50%", objectFit: "cover", cursor: "pointer"
+            }}
           />
         ) : (
           <FaUserCircle size={200} />
@@ -60,7 +68,9 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
             <Link to="/statistics-user" className="dropdown-button">Ver estatísticas</Link>
           </li>
           <li>
-            <button onClick={() => setIsConfirmModalOpen(true)}>Deletar todos os seus posts</button>
+            <button onClick={() => setIsConfirmModalOpen(true)}>
+              Deletar todos os seus posts
+            </button>
           </li>
           <li>
             <Logout />
@@ -68,6 +78,7 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
         </ul>
       </aside>
 
+      {/* MODAL DE CONFIRMAÇÃO */}
       <div className="user-area-modal">
         <Modal isOpen={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
           <h2>Confirmar exclusão</h2>
@@ -75,9 +86,11 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
 
           <div className="user-area-modal-btn">
             <button className="confirm-btn" onClick={deleteAllPosts}>
-            {loading ? "Deletando..." : "Confirmar"}
-          </button>
-          <button className="cancel-btn" onClick={() => setIsConfirmModalOpen(false)}>Cancelar</button>
+              {loading ? "Deletando..." : "Confirmar"}
+            </button>
+            <button className="cancel-btn" onClick={() => setIsConfirmModalOpen(false)}>
+              Cancelar
+            </button>
           </div>
         </Modal>
       </div>
