@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import '../../styles/posts/PostCard.css';
+import CreateComment from '../comments/CreateComment';
+import CommentsList from '../comments/CommentsList';
 
 interface Post {
   id: number;
@@ -17,6 +19,7 @@ interface PostCardProps {
 function PostCard({ post, onBack }: PostCardProps) {
   const API_URL = import.meta.env.VITE_API_URL;
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [reloadComments, setReloadComments] = useState(false);
 
    return (
     <div className="post-detail">
@@ -43,6 +46,12 @@ function PostCard({ post, onBack }: PostCardProps) {
         </div>
       )}
       
+      <h3>Adicionar comentário</h3>
+      <CreateComment postId={post.id} API_URL={API_URL}
+       onCommentCreated={() => setReloadComments(!reloadComments)}></CreateComment>
+
+      <h3>Comentários</h3>
+      <CommentsList postId={post.id} API_URL={API_URL} triggerReload={reloadComments}></CommentsList>
     </div>
   );
 }
