@@ -50,13 +50,15 @@
 
 .post-detail {
   background-color: white;
-  width: 99%;
   color: black;
+  width: 100%;
+  max-width: 2000px;  
+  margin: 0 auto;     
   border-radius: 10px;
   padding: 30px;
+  box-sizing: border-box;
 }
 
-/* Nova seção com título à esquerda e imagem à direita */
 .post-header {
   display: flex;
   align-items: center;
@@ -96,4 +98,90 @@
   font-weight: bold;
   display: block;
   text-align: right;
+}
+
+/* ========================= */
+/* 📱 TABLET (até 1024px) */
+/* ========================= */
+@media (max-width: 1024px) {
+  .post-header {
+    gap: 15px;
+  }
+
+  .post-header h1 {
+    font-size: 2.4rem;
+  }
+
+  .post-header img {
+    width: 240px;
+    height: 320px;
+  }
+
+  .post-detail {
+    padding: 20px;
+  }
+}
+
+/* ========================= */
+/* 📱 MOBILE (até 768px) */
+/* ========================= */
+@media (max-width: 768px) {
+  .post-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .post-header h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .post-header img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+  }
+
+  .post-detail p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .post-detail small {
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  .btn-voltar {
+    font-size: 1.2rem;
+  }
+}
+
+/* ========================= */
+/* 📱 MOBILE PEQUENO (até 480px) */
+/* ========================= */
+@media (max-width: 480px) {
+  .post-detail {
+    padding: 15px;
+  }
+
+  .post-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .post-detail p {
+    font-size: 1rem;
+  }
+
+  .close-button {
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+  }
+
+  .image-modal-content {
+    max-width: 95%;
+    max-height: 85%;
+  }
 }
