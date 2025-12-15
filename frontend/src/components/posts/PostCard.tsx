@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import '../../styles/posts/PostCard.css';
-import CreateComment from '../comments/CreateComment';
-import CommentsList from '../comments/CommentsList';
+import CreateComment from "../comments/CreateComment";
+import CommentsList from "../comments/CommentsList";
 
 interface Post {
   id: number;
@@ -9,49 +11,97 @@ interface Post {
   bodyPost: string;
   imagePost: string;
   createdAt: string;
+  updatedAt: string;
 }
 
-interface PostCardProps {
-  post: Post;
-  onBack: () => void;
-}
-
-function PostCard({ post, onBack }: PostCardProps) {
+function PostCard({ onBack }: { onBack: () => void }) {
+  const { id } = useParams();
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const [post, setPost] = useState<Post | null>(null);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [reloadComments, setReloadComments] = useState(false);
 
-   return (
+  useEffect(() => {
+    async function fetchPost() {
+      const token = sessionStorage.getItem("token");
+
+      const response = await axios.get(`${API_URL}/posts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = response.data;
+
+      setPost({
+        id: data.id,
+        titlePost: data.titlePost,
+        bodyPost: data.bodyPost,
+        imagePost: data.imagePost,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt 
+      });
+    }
+
+    fetchPost();
+  }, [id]);
+
+  if (!post) {
+    return <p>Carregando post...</p>;
+  }
+
+  return (
     <div className="post-detail">
-      <button onClick={onBack} style={{ marginBottom: "15px" }} className="btn-voltar">
+      <button onClick={onBack} className="btn-voltar">
         ← Voltar
       </button>
 
-      {/* Nova div para agrupar título e imagem */}
       <div className="post-header">
         <h1>{post.titlePost}</h1>
+
         {post.imagePost && (
-          <img src={`${API_URL}${post.imagePost}`} alt={post.titlePost} onClick={() => setIsImageOpen(true)}/>
+          <img
+            src={`${API_URL}${post.imagePost}`}
+            alt={post.titlePost}
+            onClick={() => setIsImageOpen(true)}
+          />
         )}
       </div>
 
       <p>{post.bodyPost}</p>
-      <small>Criado em: {new Date(post.createdAt).toLocaleDateString()}</small>
+      <small>
+        Criado em: {new Date(post.createdAt).toLocaleDateString()}
+      </small>
 
-      {/*Modal de imagem ampliada*/}
+       <small>
+        Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}
+      </small>
+
       {isImageOpen && (
-        <div className='image-modal' onClick={() => setIsImageOpen(false)}>
-          <img src={`${API_URL}${post.imagePost}`} alt={post.titlePost} className='image-modal-content'/>
-          <span className='close-button'>&times;</span>
+        <div className="image-modal" onClick={() => setIsImageOpen(false)}>
+          <img
+            src={`${API_URL}${post.imagePost}`}
+            alt={post.titlePost}
+            className="image-modal-content"
+          />
+          <span className="close-button">&times;</span>
         </div>
       )}
-      
+
       <h3>Adicionar comentário</h3>
-      <CreateComment postId={post.id} API_URL={API_URL}
-       onCommentCreated={() => setReloadComments(!reloadComments)}></CreateComment>
+      <CreateComment
+        postId={post.id}
+        API_URL={API_URL}
+        onCommentCreated={() => setReloadComments(!reloadComments)}
+      />
 
       <h3>Comentários</h3>
-      <CommentsList postId={post.id} API_URL={API_URL} triggerReload={reloadComments}></CommentsList>
+      <CommentsList
+        postId={post.id}
+        API_URL={API_URL}
+        triggerReload={reloadComments}
+      />
     </div>
   );
 }
