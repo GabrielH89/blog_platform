@@ -6,6 +6,7 @@ import { useState } from "react";
 import Modal from "../../utils/Modal";
 import CreateRating from "../ratings/CreateRating";
 import RatingDisplay from "../ratings/RatingDisplay";
+import { useNavigate } from "react-router-dom";
 
 interface Post {
   id: number;
@@ -20,19 +21,18 @@ interface Post {
 interface PostItemProps {
   post: Post;
   API_URL: string;
-  onClick: () => void;
   onDeleted: (id: number) => void;
   onEdited: (post: Post) => void;
 }
 
-function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps) {
+function PostItem({ post, API_URL, onDeleted, onEdited }: PostItemProps) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
-
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const navigate = useNavigate();
 
   const deletePostById = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); 
 
     if (!confirm("Tem certeza que deseja deletar este post?")) return;
 
@@ -50,7 +50,7 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
   };
 
   const openEditModal = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // ← impede abrir a página do post
     setEditingPost(post);
     setShowEditModal(true);
   };
@@ -87,22 +87,33 @@ function PostItem({ post, API_URL, onClick, onDeleted, onEdited }: PostItemProps
         </Modal>
       )}
 
-      <div className="post-card" onClick={onClick}>
+      {/* CARD */}
+      <div className="post-card" onClick={() => navigate(`/home/post/${post.id}`)}>
         <div className="icons-div">
-          <FaTrash className="icon-wrapper delete-icon" onClick={deletePostById} />
-          <FaEdit className="icon-wrapper edit-icon" onClick={openEditModal} />
+          
+          {/* DELETE */}
+          <FaTrash
+            className="icon-wrapper delete-icon"
+            onClick={deletePostById}
+          />
 
-          {/* Ícone de avaliação */}
+          {/* EDITAR */}
+          <FaEdit
+            className="icon-wrapper edit-icon"
+            onClick={openEditModal}
+          />
+
+          {/* ESTRELA (RATING) */}
           <FaStar
             className="icon-wrapper star-icon"
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); // ← impede navegação
               setShowRatingModal(true);
             }}
           />
         </div>
 
-        <RatingDisplay postId={post.id} API_URL={API_URL}></RatingDisplay>
+        <RatingDisplay postId={post.id} API_URL={API_URL} />
 
         <h2>{post.titlePost}</h2>
 

@@ -1,4 +1,4 @@
-package com.gabriel.blog_project.controllers;
+package com.gabriel.blog_project.controllers; 
 
 import java.util.List;
 
