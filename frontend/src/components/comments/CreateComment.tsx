@@ -1,6 +1,7 @@
 import axios from "axios";
 import type React from "react";
 import { useState } from "react";
+import '../../styles/comments/CreateComment.css';
 
 interface CommentProps {
     postId: number;
@@ -37,7 +38,7 @@ function CreateComment({postId, API_URL, onClose, onCommentCreated}: CommentProp
         <div>
             <form className="comment-form" onSubmit={createComment}>
                 <textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)}
-                placeholder="Escreva seu comentário..."
+                placeholder="Escreva seu comentário..." maxLength={2000}
                 ></textarea>
                 <button onClick={createComment}>Enviar</button>
             </form>

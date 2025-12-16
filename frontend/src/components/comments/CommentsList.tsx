@@ -1,6 +1,6 @@
-// src/components/comments/CommentsList.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "../../styles/comments/CommentList.css";
 
 interface Comment {
   id: number;
@@ -12,7 +12,7 @@ interface Comment {
 interface CommentsListProps {
   postId: number;
   API_URL: string;
-  triggerReload?: boolean;     // usado para recarregar quando um novo comentário for criado
+  triggerReload?: boolean;
 }
 
 function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
@@ -41,19 +41,27 @@ function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
 
   useEffect(() => {
     loadComments();
-  }, [postId, triggerReload]); 
-  // dispara quando o id do post muda OU triggerReload muda
+  }, [postId, triggerReload]);
 
   return (
     <div className="comment-list">
       {comments.length === 0 ? (
-        <p>Nenhum comentário ainda.</p>
+        <p className="comment-empty">Nenhum comentário ainda.</p>
       ) : (
         comments.map((c) => (
           <div key={c.id} className="comment-item">
-            <p>{c.comment_body}</p>
-            <small>{new Date(c.createdAt).toLocaleString()}</small>
-            <hr />
+            
+            {/* Avatar simples */}
+            <div className="comment-avatar"></div>
+
+            {/* Conteúdo */}
+            <div className="comment-content">
+              <p className="comment-text">{c.comment_body}</p>
+              <span className="comment-date">
+                {new Date(c.createdAt).toLocaleString()}
+              </span>
+            </div>
+
           </div>
         ))
       )}
