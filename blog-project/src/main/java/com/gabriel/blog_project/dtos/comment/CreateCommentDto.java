@@ -1,5 +1,5 @@
 package com.gabriel.blog_project.dtos.comment;
 
-public record CreateCommentDto(String comment_body) {
+public record CreateCommentDto(String comment_body, Long parendtCommentId) {
 
 }

@@ -1,14 +1,18 @@
 package com.gabriel.blog_project.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -29,6 +33,9 @@ public class Comment {
 	private String comment_body;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	
+	@Column(nullable = false)
+	private Boolean deleted = false;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -37,6 +44,13 @@ public class Comment {
 	@ManyToOne
 	@JoinColumn(name = "post_id", nullable = false)
 	private Post post;
+	
+	@ManyToOne
+	@JoinColumn(name = "parent_comment_id")
+	private Comment parentComment;
+	
+	@OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+	private List<Comment> replies = new ArrayList<>();
 
 	public Comment() {
 		
@@ -115,6 +129,29 @@ public class Comment {
 		this.post = post;
 	}
 
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public List<Comment> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<Comment> replies) {
+		this.replies = replies;
+	}
+
+	public Comment getParentComment() {
+		return parentComment;
+	}
+
+	public void setParentComment(Comment parentComment) {
+		this.parentComment = parentComment;
+	}
 }
 
 
