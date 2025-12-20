@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import CommentItem from "./CommentItem";
 import "../../styles/comments/CommentList.css";
 
-interface Comment {
+export interface Comment {
   id: number;
   comment_body: string;
   createdAt: string;
   updatedAt: string;
+  replies: Comment[];
 }
 
 interface CommentsListProps {
@@ -28,12 +30,7 @@ function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
         }
       );
 
-      const sorted = response.data.sort(
-        (a: Comment, b: Comment) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-
-      setComments(sorted);
+      setComments(response.data);
     } catch (error) {
       console.log("Error loading comments:", error);
     }
@@ -48,21 +45,14 @@ function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
       {comments.length === 0 ? (
         <p className="comment-empty">Nenhum comentário ainda.</p>
       ) : (
-        comments.map((c) => (
-          <div key={c.id} className="comment-item">
-            
-            {/* Avatar simples */}
-            <div className="comment-avatar"></div>
-
-            {/* Conteúdo */}
-            <div className="comment-content">
-              <p className="comment-text">{c.comment_body}</p>
-              <span className="comment-date">
-                {new Date(c.createdAt).toLocaleString()}
-              </span>
-            </div>
-
-          </div>
+        comments.map((comment) => (
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            postId={postId}
+            API_URL={API_URL}
+            onReload={loadComments}
+          />
         ))
       )}
     </div>

@@ -8,26 +8,27 @@ interface CommentProps {
     API_URL: string;
     onClose?: () => void; 
     onCommentCreated?: () => void;
+    parentCommentId?: number;
 }
 
-function CreateComment({postId, API_URL, onClose, onCommentCreated}: CommentProps) {
+function CreateComment({postId, API_URL, onClose, onCommentCreated, parentCommentId}: CommentProps) {
     const [commentBody, setCommentBody] = useState("");
     const token = sessionStorage.getItem("token");
 
     const createComment = async (e: React.FormEvent) => {
         e.preventDefault();
-        try{
-            await axios.post(`${API_URL}/posts/${postId}/comments`,{ comment_body: commentBody }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            setCommentBody("");
-            if (onCommentCreated) onCommentCreated(); // atualizar lista de comentários
-            if (onClose) onClose();
-
+        try {
+            await axios.post(`${API_URL}/posts/${postId}/comments`,{ comment_body: commentBody },{
+            params: parentCommentId? { parentCommentId }: undefined,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        }
+      );
+        setCommentBody("");
+        onCommentCreated?.();
+        onClose?.();
             
         }catch(error) {
             console.log("Error: " + error);
@@ -38,8 +39,7 @@ function CreateComment({postId, API_URL, onClose, onCommentCreated}: CommentProp
         <div>
             <form className="comment-form" onSubmit={createComment}>
                 <textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)}
-                placeholder="Escreva seu comentário..." maxLength={2000}
-                ></textarea>
+                placeholder={parentCommentId ? "Escreva uma resposta...":"Escreva seu comentário"} maxLength={2000}></textarea>
                 <button onClick={createComment}>Enviar</button>
             </form>
         </div>
