@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.blog_project.dtos.comment.CreateCommentDto;
@@ -31,10 +32,9 @@ public class CommentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ShowCommentDto> createComment(@Valid @PathVariable Long postId, @RequestBody CreateCommentDto createDto, 
-			HttpServletRequest request) {
-		ShowCommentDto commentCreated = commentService.createComment(postId, createDto, request);
-		return ResponseEntity.status(201).body(commentCreated);
+	public ResponseEntity<ShowCommentDto> createComment(@Valid @PathVariable Long postId, @RequestParam(required=false) Long parentCommentId, 
+			@RequestBody CreateCommentDto createDto, HttpServletRequest request) {
+		 return ResponseEntity.status(201).body(commentService.createComment(postId, createDto, parentCommentId, request));
 	}
 	
 	@GetMapping

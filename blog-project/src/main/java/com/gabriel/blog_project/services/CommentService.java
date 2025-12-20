@@ -21,114 +21,129 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class CommentService {
-	
-	private final CommentRepository commentRepository;
-	private final UserRepository userRepository;
-	private final PostRepository postRepository;
-	
-	public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
-		this.commentRepository = commentRepository;
-		this.userRepository = userRepository;
-		this.postRepository = postRepository;
-	}
-	
-	public ShowCommentDto createComment(Long postId, CreateCommentDto createDto, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new EmptyDatasException("Post not found"));
-		
-		var comment = new Comment(createDto.comment_body());
-		comment.setUser(user);
-		comment.setPost(post);
-		
-		var commentSaved = commentRepository.save(comment);
-		
-		return new ShowCommentDto(commentSaved.getId(), commentSaved.getComment_body(), commentSaved.getCreatedAt(), commentSaved.getUpdatedAt());
-	}
-	
-	public List<ShowCommentDto> getAllComments(Long postId, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		postRepository.findById(postId)
-				.orElseThrow(() -> new EmptyDatasException("Post not found"));
-		
-		var comments = commentRepository.findCommentByPostId(postId);
-		
-		if(comments.isEmpty()) {
-			throw new EmptyDatasException("No comments found");
-		}
-				
-		List<ShowCommentDto> result = comments.stream().map(comment -> new ShowCommentDto(comment.getId(), comment.getComment_body(), 
-				comment.getCreatedAt(), comment.getUpdatedAt())).collect(Collectors.toList());
-		
-		return result;
-	}
-	
-	public ShowCommentDto getCommentById(Long postId, Long commentId, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-		.orElseThrow(() -> new RuntimeException("User not found"));
 
-		postRepository.findById(postId)
-		.orElseThrow(() -> new EmptyDatasException("Post not found"));
-		
-		 var comment = commentRepository.findByPostIdAndId(postId, commentId)
-			        .orElseThrow(() -> new EmptyDatasException("Comment not found"));
-		
-		return new ShowCommentDto(commentId, comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt());
-	}
-	
-	public void deleteCommentById(Long postId, Long commentId, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-			
-		User user = userRepository.findById(userId)
-		.orElseThrow(() -> new RuntimeException("User not found"));
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-		postRepository.findById(postId)
-		.orElseThrow(() -> new EmptyDatasException("Post not found"));
-		
-		var comment = commentRepository.findByPostIdAndId(postId, commentId)
-				.orElseThrow(() -> new EmptyDatasException("Comment not found"));
-		
-		if (!Objects.equals(comment.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
-			throw new PermissionDeniedException("You have no permission to delete this comment.");
-		}
-		
-		commentRepository.delete(comment);
-	}
-	
-	public ShowCommentDto updateCommentById(Long commentId, Long postId, UpdateCommentDto updateDto, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-			.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		postRepository.findById(postId)
-			.orElseThrow(() -> new EmptyDatasException("Post not found"));
-		
-		var comment = commentRepository.findByPostIdAndId(postId, commentId)
-			.orElseThrow(() -> new EmptyDatasException("Comment not found"));
-		
-		if(!Objects.equals(comment.getUser().getId(), userId)) {
-			throw new PermissionDeniedException("You have no permission to update this comment.");
-		}
-		
-		comment.setComment_body(updateDto.comment_body());
-		comment.setUpdatedAt(updateDto.updatedAt());
-		
-		commentRepository.save(comment);
-		
-		return new ShowCommentDto(comment.getId(), comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt());
-	}
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
+    	this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+    }
+
+    private Long validateUser(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return userId;
+    }    
+    
+    public ShowCommentDto createComment(Long postId, CreateCommentDto createDto, Long parentCommentId, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EmptyDatasException("Post not found"));
+
+        Comment comment = new Comment(createDto.comment_body());
+        comment.setUser(user);
+        comment.setPost(post);
+
+        if (parentCommentId != null) {
+            Comment parent = commentRepository.findByIdAndDeletedFalse(parentCommentId)
+                    .orElseThrow(() -> new EmptyDatasException("Parent comment not found"));
+
+            if (!parent.getPost().getId().equals(postId)) {
+                throw new IllegalArgumentException("Parent comment does not belong to this post");
+            }
+
+            comment.setParentComment(parent);
+        }
+
+        Comment saved = commentRepository.save(comment);
+
+        return toDto(saved, List.of());
+    }
+
+
+    public List<ShowCommentDto> getAllComments(Long postId, HttpServletRequest request) {
+        validateUser(request);
+
+        postRepository.findById(postId).orElseThrow(() -> new EmptyDatasException("Post not found"));
+
+        List<Comment> roots =
+                commentRepository.findByPostIdAndParentCommentIsNullAndDeletedFalseOrderByCreatedAtAsc(postId);
+
+        return roots.stream()
+                .map(comment -> toDto(
+                        comment,
+                        loadReplies(comment.getId())
+                ))
+                .toList();
+    }
+
+    public ShowCommentDto getCommentById(Long postId, Long commentId, HttpServletRequest request) {
+        validateUser(request);
+
+        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId).orElseThrow(() -> new EmptyDatasException("Comment not found"));
+
+        if (!comment.getPost().getId().equals(postId)) {
+            throw new EmptyDatasException("Comment does not belong to this post");
+        }
+
+        return toDto(comment, loadReplies(comment.getId()));
+    }
+
+    public ShowCommentDto updateCommentById(Long commentId, Long postId, UpdateCommentDto updateDto, HttpServletRequest request) {
+        Long userId = validateUser(request);
+
+        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId).orElseThrow(() -> new EmptyDatasException("Comment not found"));
+
+        if (!comment.getPost().getId().equals(postId)) {
+            throw new EmptyDatasException("Comment does not belong to this post");
+        }
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new PermissionDeniedException("You have no permission to update this comment.");
+        }
+
+        comment.setComment_body(updateDto.comment_body());
+        commentRepository.save(comment);
+
+        return toDto(comment, loadReplies(comment.getId()));
+    }
+
+    public void deleteCommentById(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = validateUser(request);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId).orElseThrow(() -> new EmptyDatasException("Comment not found"));
+
+        if (!comment.getPost().getId().equals(postId)) {
+            throw new EmptyDatasException("Comment does not belong to this post");
+        }
+
+        if (!comment.getUser().getId().equals(userId) && user.getRole() != EnumRole.ADMIN) {
+            throw new PermissionDeniedException("You have no permission to delete this comment.");
+        }
+
+        comment.setDeleted(true);
+        commentRepository.save(comment);
+    }
+   
+    private List<ShowCommentDto> loadReplies(Long parentId) {
+        return commentRepository.findByParentCommentIdAndDeletedFalseOrderByCreatedAtAsc(parentId).stream()
+                .map(reply -> toDto(reply, loadReplies(reply.getId())))
+                .toList();
+    }
+
+    private ShowCommentDto toDto(Comment comment, List<ShowCommentDto> replies) {
+        return new ShowCommentDto(comment.getId(), comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt(), comment.getDeleted(),
+        		replies);
+    }
 }
+
 
 
 

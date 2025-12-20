@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
 			
 			commentRepository.deleteAll(commentsFound);
 		}else {
-			List<Comment> userComments = commentRepository.findByUserId(userId);
+			List<Comment> userComments = commentRepository.findByParentCommentIdAndDeletedFalseOrderByCreatedAtAsc(userId);
 			
 			if(userComments.isEmpty()) {
 				throw new EmptyDatasException("No comments found in the sistem");

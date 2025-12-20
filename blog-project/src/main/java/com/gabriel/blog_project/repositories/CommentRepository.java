@@ -10,7 +10,18 @@
 	
 	@Repository
 	public interface CommentRepository extends JpaRepository<Comment, Long> {
-		List<Comment> findCommentByPostId(Long postId);
-		Optional<Comment> findByPostIdAndId(Long postId, Long commentId);
-		List<Comment> findByUserId(Long userId);
+		 // Comentários raiz visíveis
+	    List<Comment> findByPostIdAndParentCommentIsNullAndDeletedFalseOrderByCreatedAtAsc(Long postId);
+
+	    // Respostas diretas visíveis
+	    List<Comment> findByParentCommentIdAndDeletedFalseOrderByCreatedAtAsc(Long parentId);
+
+	    // Buscar comentário válido para update/delete
+	    Optional<Comment> findByIdAndDeletedFalse(Long id);
+
+	    // Comentários de um usuário (histórico)
+	    List<Comment> findByUserIdAndDeletedFalseOrderByCreatedAtDesc(Long userId);
+
+	    // Admin / auditoria (opcional)
+	    List<Comment> findByPostId(Long postId);
 	}
