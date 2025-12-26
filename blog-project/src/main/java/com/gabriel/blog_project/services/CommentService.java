@@ -140,7 +140,7 @@ public class CommentService {
 
     private ShowCommentDto toDto(Comment comment, List<ShowCommentDto> replies) {
         return new ShowCommentDto(comment.getId(), comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt(), comment.getDeleted(),
-        		replies);
+        		replies, comment.getUser().getId());
     }
 }
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,7 +50,7 @@ public class Comment {
 	@JoinColumn(name = "parent_comment_id")
 	private Comment parentComment;
 	
-	@OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> replies = new ArrayList<>();
 
 	public Comment() {
@@ -68,7 +69,6 @@ public class Comment {
 		this.user = user;
 		this.post = post;
 	}
-
 
 	@PrePersist
 	protected void onCreate() {
@@ -152,6 +152,7 @@ public class Comment {
 	public void setParentComment(Comment parentComment) {
 		this.parentComment = parentComment;
 	}
+	
 }
 
 
