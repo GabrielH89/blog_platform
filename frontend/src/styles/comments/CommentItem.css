@@ -55,3 +55,21 @@
   flex-direction: column; /* 🔥 ESSENCIAL */
   gap: 12px;
 }
+
+.comment-delete-btn {
+  background: none;
+  border: none;
+  color: #d11a2a;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.comment-delete-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.comment-delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

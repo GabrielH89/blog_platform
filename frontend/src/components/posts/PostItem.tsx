@@ -98,6 +98,7 @@ function PostItem({ post, API_URL, onDeleted, onEdited }: PostItemProps) {
           />
 
           {/* EDITAR */}
+        
           <FaEdit
             className="icon-wrapper edit-icon"
             onClick={openEditModal}

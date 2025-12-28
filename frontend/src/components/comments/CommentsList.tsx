@@ -9,6 +9,7 @@ export interface Comment {
   createdAt: string;
   updatedAt: string;
   replies: Comment[];
+  userId: number;
 }
 
 interface CommentsListProps {
@@ -40,6 +41,36 @@ function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
     loadComments();
   }, [postId, triggerReload]);
 
+  // 🔹 remover comentário da lista
+  const handleDeleted = (id: number) => {
+    const removeFromTree = (list: Comment[]): Comment[] =>
+      list
+        .filter((c) => c.id !== id)
+        .map((c) => ({
+          ...c,
+          replies: removeFromTree(c.replies || []),
+        }));
+
+    setComments((prev) => removeFromTree(prev));
+  };
+
+  // 🔹 FUNÇÃO RECURSIVA → atualiza em qualquer nível
+  const updateTree = (list: Comment[], updated: Comment): Comment[] => {
+    return list.map((c) => {
+      if (c.id === updated.id) return updated;
+
+      return {
+        ...c,
+        replies: updateTree(c.replies || [], updated),
+      };
+    });
+  };
+
+  // 🔹 atualizar comentário editado
+  const handleEdited = (updated: Comment) => {
+    setComments((prev) => updateTree(prev, updated));
+  };
+
   return (
     <div className="comment-list">
       {comments.length === 0 ? (
@@ -52,6 +83,8 @@ function CommentsList({ postId, API_URL, triggerReload }: CommentsListProps) {
             postId={postId}
             API_URL={API_URL}
             onReload={loadComments}
+            onDeleted={handleDeleted}
+            onEdited={handleEdited}
           />
         ))
       )}

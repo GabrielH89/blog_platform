@@ -45,15 +45,13 @@ function EditPost({ post, onClose, onPostEdited }: EditPostProps) {
         }
 
         const response = await axios.put(
-        `${API_URL}/posts/${post.id}`,
-        formData,
-        {
+        `${API_URL}/posts/${post.id}`,formData,{
             headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             }
         }
-        );
+      );
 
         onPostEdited(response.data);
         onClose();

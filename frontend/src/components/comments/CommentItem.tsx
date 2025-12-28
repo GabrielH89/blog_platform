@@ -1,13 +1,19 @@
 import { useState } from "react";
+import axios from "axios";
 import CreateComment from "./CreateComment";
 import type { Comment } from "./CommentsList";
 import "../../styles/comments/CommentItem.css";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import EditComment from "./EditComment";
+import Modal from "../../utils/Modal";
 
 interface CommentItemProps {
   comment: Comment;
   postId: number;
   API_URL: string;
   onReload: () => void;
+  onDeleted: (id: number) => void;
+  onEdited: (comment: Comment) => void;
 }
 
 function CommentItem({
@@ -15,20 +21,81 @@ function CommentItem({
   postId,
   API_URL,
   onReload,
+  onDeleted,
+  onEdited,
 }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingComment, setEditingComment] = useState<Comment | null>(null);
+
+  const token = sessionStorage.getItem("token");
+  const loggedUserId = Number(sessionStorage.getItem("userId"));
 
   const repliesCount = comment.replies?.length || 0;
+  const canDelete = loggedUserId === comment.userId;
+
+  const handleOpenDeleteModal = () => {
+    if (!canDelete) return;
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await axios.delete(
+        `${API_URL}/posts/${postId}/comments/${comment.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setShowDeleteModal(false);
+      onDeleted(comment.id);
+      onReload();
+    } catch (error) {
+      console.error("Erro ao deletar comentário:", error);
+      alert("Não foi possível deletar o comentário.");
+    }
+  };
+
+  const openEditModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingComment(comment);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setEditingComment(null);
+  };
 
   return (
     <div className="comment-item">
+      {showEditModal && editingComment && (
+        <Modal isOpen={showEditModal} onClose={closeEditModal}>
+          <EditComment
+            comment={editingComment}
+            postId={postId}
+            onClose={closeEditModal}
+            onCommentEdited={(updatedComment) => {
+              onEdited(updatedComment);
+              closeEditModal();
+            }}
+          />
+        </Modal>
+      )}
+
+      <FaEdit className="icon-wrapper edit-icon" onClick={openEditModal} />
+
       <div className="comment-avatar" />
 
       <div className="comment-body">
-        {/* Conteúdo */}
         <div className="comment-content">
           <p className="comment-text">{comment.comment_body}</p>
+
           <span className="comment-date">
             {new Date(comment.createdAt).toLocaleString()}
           </span>
@@ -39,6 +106,20 @@ function CommentItem({
               onClick={() => setShowReplyForm(!showReplyForm)}
             >
               Responder
+            </button>
+
+            <button
+              className="comment-delete-btn"
+              onClick={handleOpenDeleteModal}
+              disabled={!canDelete}
+              title={
+                canDelete
+                  ? "Excluir comentário"
+                  : "Você não pode excluir este comentário"
+              }
+              aria-label="Excluir comentário"
+            >
+              <FaTrash />
             </button>
 
             {repliesCount > 0 && (
@@ -54,7 +135,6 @@ function CommentItem({
           </div>
         </div>
 
-        {/* Formulário de resposta */}
         {showReplyForm && (
           <CreateComment
             postId={postId}
@@ -65,7 +145,6 @@ function CommentItem({
           />
         )}
 
-        {/* Respostas (OCULTAS por padrão) */}
         {showReplies && repliesCount > 0 && (
           <div className="comment-replies">
             {comment.replies.map((reply) => (
@@ -75,11 +154,35 @@ function CommentItem({
                 postId={postId}
                 API_URL={API_URL}
                 onReload={onReload}
+                onDeleted={onDeleted}
+                onEdited={onEdited}
               />
             ))}
           </div>
         )}
       </div>
+
+      {showDeleteModal && (
+        <div className="modal-overlay-delete-comment">
+          <div className="modal-box">
+            <h4>Excluir comentário</h4>
+            <p>Tem certeza que deseja excluir seu comentário?</p>
+
+            <div className="modal-actions">
+              <button
+                className="btn-cancel"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancelar
+              </button>
+
+              <button className="btn-confirm" onClick={handleConfirmDelete}>
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
