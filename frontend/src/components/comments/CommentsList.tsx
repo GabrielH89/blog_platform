@@ -10,6 +10,7 @@ export interface Comment {
   updatedAt: string;
   replies: Comment[];
   userId: number;
+  imageUser: string;
 }
 
 interface CommentsListProps {

@@ -1,8 +1,6 @@
 package com.gabriel.blog_project.services;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.gabriel.blog_project.dtos.comment.CreateCommentDto;
 import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
@@ -140,7 +138,7 @@ public class CommentService {
 
     private ShowCommentDto toDto(Comment comment, List<ShowCommentDto> replies) {
         return new ShowCommentDto(comment.getId(), comment.getComment_body(), comment.getCreatedAt(), comment.getUpdatedAt(), comment.getDeleted(),
-        		replies, comment.getUser().getId());
+        		replies, comment.getUser().getId(), comment.getUser().getImageUser());
     }
 }
 

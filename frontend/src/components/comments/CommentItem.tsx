@@ -6,7 +6,6 @@ import "../../styles/comments/CommentItem.css";
 import { FaEdit, FaTrash, FaUserCircle } from "react-icons/fa";
 import EditComment from "./EditComment";
 import Modal from "../../utils/Modal";
-import { useUserData } from "../../utils/useUserData";
 
 interface CommentItemProps {
   comment: Comment;
@@ -17,7 +16,7 @@ interface CommentItemProps {
   onEdited: (comment: Comment) => void;
 }
 
-function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited,}: CommentItemProps) {
+function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited}: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -28,6 +27,8 @@ function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited,}:
   const repliesCount = comment.replies?.length || 0;
   const canDelete = loggedUserId === comment.userId;
   const canEdit = loggedUserId === comment.userId;
+
+  console.log(comment.imageUser)
 
   const handleOpenDeleteModal = () => {
     if (!canDelete) return;
@@ -81,10 +82,18 @@ function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited,}:
         </Modal>
       )}
       
-      <div className="comment-avatar">
-       
-      </div>
-
+     <div className="comment-avatar">
+  {comment.imageUser ? (
+    <img
+      src={`${API_URL}${comment.imageUser}`}
+      alt="Imagem do perfil"
+      className="profile-picture"
+      style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover" }}
+    />
+  ) : (
+    <FaUserCircle size={60} />
+  )}
+</div>
       <div className="comment-body">
         <div className="comment-content">
           <p className="comment-text">{comment.comment_body}</p>
