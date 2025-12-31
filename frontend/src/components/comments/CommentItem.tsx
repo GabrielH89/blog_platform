@@ -28,8 +28,6 @@ function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited}: 
   const canDelete = loggedUserId === comment.userId;
   const canEdit = loggedUserId === comment.userId;
 
-  console.log(comment.imageUser)
-
   const handleOpenDeleteModal = () => {
     if (!canDelete) return;
     setShowDeleteModal(true);
