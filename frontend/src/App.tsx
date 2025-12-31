@@ -13,11 +13,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={ <SignIn/>}/>
-          <Route path='/home' element={<PrivateRoute element={<HomeUser/>} />} />
-          <Route path='/profile' element={<PrivateRoute element={<Profile/>} />} />
-          <Route path='/home/post/:id' element={<PrivateRoute element={<PostCard onBack={function (): void {
-            throw new Error('Function not implemented.');
-          } }/>} />}/>
+          <Route path='/user/home' element={<PrivateRoute element={<HomeUser/>}/>}/>
+          <Route path='/profile' element={<PrivateRoute element={<Profile/>}/>}/>
+          <Route path='/home/post/:id' element={<PrivateRoute element={<PostCard/>}/>}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import '../../styles/posts/PostCard.css';
 import CreateComment from "../comments/CreateComment";
 import CommentsList from "../comments/CommentsList";
@@ -14,13 +14,13 @@ interface Post {
   updatedAt: string;
 }
 
-function PostCard({ onBack }: { onBack: () => void }) {
+function PostCard() {
   const { id } = useParams();
   const API_URL = import.meta.env.VITE_API_URL;
-
   const [post, setPost] = useState<Post | null>(null);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [reloadComments, setReloadComments] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPost() {
@@ -53,9 +53,7 @@ function PostCard({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="post-detail">
-      <button onClick={onBack} className="btn-voltar">
-        ← Voltar
-      </button>
+      <button onClick={() => navigate("/user/home")} className="btn-voltar">← Voltar</button>
 
       <div className="post-header">
         <h1>{post.titlePost}</h1>

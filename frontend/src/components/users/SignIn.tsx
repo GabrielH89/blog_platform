@@ -31,10 +31,10 @@ function SignIn() {
       const {token, userId, role} = response.data;
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("userId", userId);
-      sessionStorage.setItem("tole", role);
+      sessionStorage.setItem("role", role);
 
       if(role === "USER") {
-        navigate("/home");
+        navigate("/user/home");
       }else{
         navigate("/admin")
       }
