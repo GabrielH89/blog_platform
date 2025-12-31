@@ -3,9 +3,10 @@ import axios from "axios";
 import CreateComment from "./CreateComment";
 import type { Comment } from "./CommentsList";
 import "../../styles/comments/CommentItem.css";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaUserCircle } from "react-icons/fa";
 import EditComment from "./EditComment";
 import Modal from "../../utils/Modal";
+import { useUserData } from "../../utils/useUserData";
 
 interface CommentItemProps {
   comment: Comment;
@@ -16,25 +17,17 @@ interface CommentItemProps {
   onEdited: (comment: Comment) => void;
 }
 
-function CommentItem({
-  comment,
-  postId,
-  API_URL,
-  onReload,
-  onDeleted,
-  onEdited,
-}: CommentItemProps) {
+function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited,}: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
-
   const token = sessionStorage.getItem("token");
   const loggedUserId = Number(sessionStorage.getItem("userId"));
-
   const repliesCount = comment.replies?.length || 0;
   const canDelete = loggedUserId === comment.userId;
+  const canEdit = loggedUserId === comment.userId;
 
   const handleOpenDeleteModal = () => {
     if (!canDelete) return;
@@ -87,10 +80,10 @@ function CommentItem({
           />
         </Modal>
       )}
-
-      <FaEdit className="icon-wrapper edit-icon" onClick={openEditModal} />
-
-      <div className="comment-avatar" />
+      
+      <div className="comment-avatar">
+       
+      </div>
 
       <div className="comment-body">
         <div className="comment-content">
@@ -101,46 +94,31 @@ function CommentItem({
           </span>
 
           <div className="comment-actions">
-            <button
-              className="comment-reply-btn"
-              onClick={() => setShowReplyForm(!showReplyForm)}
-            >
-              Responder
-            </button>
+            <button className="comment-reply-btn" onClick={() => setShowReplyForm(!showReplyForm)}>Responder</button>
 
             <button
-              className="comment-delete-btn"
-              onClick={handleOpenDeleteModal}
-              disabled={!canDelete}
-              title={
-                canDelete
-                  ? "Excluir comentário"
-                  : "Você não pode excluir este comentário"
-              }
-              aria-label="Excluir comentário"
-            >
+              className="comment-delete-btn" onClick={handleOpenDeleteModal} disabled={!canDelete}
+              title={canDelete ? "Excluir comentário" : "Você não pode excluir este comentário"}
+              aria-label="Excluir comentário">
               <FaTrash />
             </button>
 
+             <button className="comment-edit-btn" onClick={openEditModal} disabled={!canEdit}
+              title={canEdit ? "Editar comentário" : "Você não pode editar este comentário"}
+              aria-label="Editar comentário">
+              <FaEdit />
+            </button>
+
             {repliesCount > 0 && (
-              <button
-                className="comment-toggle-replies"
-                onClick={() => setShowReplies(!showReplies)}
-              >
-                {showReplies
-                  ? "Ocultar respostas"
-                  : `Ver respostas (${repliesCount})`}
+              <button className="comment-toggle-replies" onClick={() => setShowReplies(!showReplies)}>
+                {showReplies ? "Ocultar respostas" : `Ver respostas (${repliesCount})`}
               </button>
             )}
           </div>
         </div>
 
         {showReplyForm && (
-          <CreateComment
-            postId={postId}
-            API_URL={API_URL}
-            parentCommentId={comment.id}
-            onClose={() => setShowReplyForm(false)}
+          <CreateComment postId={postId} API_URL={API_URL} parentCommentId={comment.id} onClose={() => setShowReplyForm(false)}
             onCommentCreated={onReload}
           />
         )}
@@ -148,14 +126,8 @@ function CommentItem({
         {showReplies && repliesCount > 0 && (
           <div className="comment-replies">
             {comment.replies.map((reply) => (
-              <CommentItem
-                key={reply.id}
-                comment={reply}
-                postId={postId}
-                API_URL={API_URL}
-                onReload={onReload}
-                onDeleted={onDeleted}
-                onEdited={onEdited}
+              <CommentItem key={reply.id} comment={reply} postId={postId} API_URL={API_URL} 
+              onReload={onReload} onDeleted={onDeleted} onEdited={onEdited}
               />
             ))}
           </div>
@@ -169,16 +141,8 @@ function CommentItem({
             <p>Tem certeza que deseja excluir seu comentário?</p>
 
             <div className="modal-actions">
-              <button
-                className="btn-cancel"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancelar
-              </button>
-
-              <button className="btn-confirm" onClick={handleConfirmDelete}>
-                Excluir
-              </button>
+              <button className="btn-cancel" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
+              <button className="btn-confirm" onClick={handleConfirmDelete}>Excluir</button>
             </div>
           </div>
         </div>

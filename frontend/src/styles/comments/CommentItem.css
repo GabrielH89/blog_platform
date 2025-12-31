@@ -73,3 +73,39 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.comment-edit-btn {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.comment-edit-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.comment-edit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.modal-overlay-delete-comment {
+  position: fixed;         
+  top: 0;
+  left: 0;
+  width: 100vw;            
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 9999;                  
+  padding: 16px;                  
+}
+
+.modal-overlay-delete-comment .modal-box {
+  background-color: white;
+}
