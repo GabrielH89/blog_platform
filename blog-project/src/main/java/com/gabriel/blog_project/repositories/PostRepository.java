@@ -11,4 +11,5 @@ import com.gabriel.blog_project.entities.Post;
 public interface PostRepository extends JpaRepository<Post, Long> {
 	List<Post> findPostByUserId(Long userId);
 	List<Post> findAllByOrderByCreatedAtDesc();
+	List<Post> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 }
