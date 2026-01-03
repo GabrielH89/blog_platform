@@ -5,6 +5,7 @@ import HomeUser from './components/posts/HomeUser';
 import PrivateRoute from './utils/PrivateRoute';
 import Profile from './components/users/Profile';
 import PostCard from './components/posts/PostCard';
+import Historic from './components/users/Historic';
 
 function App() {
 
@@ -14,8 +15,9 @@ function App() {
         <Routes>
           <Route path='/' element={ <SignIn/>}/>
           <Route path='/user/home' element={<PrivateRoute element={<HomeUser/>}/>}/>
-          <Route path='/profile' element={<PrivateRoute element={<Profile/>}/>}/>
+          <Route path='/user/profile' element={<PrivateRoute element={<Profile/>}/>}/>
           <Route path='/home/post/:id' element={<PrivateRoute element={<PostCard/>}/>}/>
+          <Route path='/user/historic' element={<PrivateRoute element={<Historic/>}/>}/>
         </Routes>
       </BrowserRouter>
     </>

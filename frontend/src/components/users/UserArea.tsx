@@ -62,10 +62,13 @@ function UserArea({ isSidebarOpen, toggleSidebar, onDeleteAllPosts }: UserAreaPr
 
         <ul>
           <li>
-            <Link to="/profile" className="dropdown-button">Informações pessoais</Link>
+            <Link to="/user/profile" className="dropdown-button">Informações pessoais</Link>
           </li>
           <li>
-            <Link to="/statistics-user" className="dropdown-button">Ver estatísticas</Link>
+            <Link to="/user/historic" className="dropdown-button">Histórico</Link>
+          </li>
+          <li>
+            <Link to="/user/statistics-user" className="dropdown-button">Ver estatísticas</Link>
           </li>
           <li>
             <button onClick={() => setIsConfirmModalOpen(true)}>
