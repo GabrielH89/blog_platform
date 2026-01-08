@@ -1,10 +1,13 @@
 package com.gabriel.blog_project.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import com.gabriel.blog_project.dtos.comment.CreateCommentDto;
 import com.gabriel.blog_project.dtos.comment.ShowCommentDto;
 import com.gabriel.blog_project.dtos.comment.UpdateCommentDto;
+import com.gabriel.blog_project.dtos.post.ShowPostDto;
 import com.gabriel.blog_project.entities.Comment;
 import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.Post;
@@ -73,11 +76,19 @@ public class CommentService {
                 commentRepository.findByPostIdAndParentCommentIsNullAndDeletedFalseOrderByCreatedAtAsc(postId);
 
         return roots.stream()
-                .map(comment -> toDto(
-                        comment,
-                        loadReplies(comment.getId())
-                ))
-                .toList();
+                .map(comment -> toDto(comment, loadReplies(comment.getId()))).toList();
+    }
+    
+    public List<ShowCommentDto> getCommentsUser(HttpServletRequest request) {
+    	Long userId = validateUser(request);
+    	
+    	var comments = commentRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+    	
+    	if(comments.isEmpty()) {
+    		throw new EmptyDatasException("No comments found");
+    	}
+    	
+    	return comments.stream().map(comment -> toDto(comment, loadReplies(comment.getId()))).toList();    	
     }
 
     public ShowCommentDto getCommentById(Long postId, Long commentId, HttpServletRequest request) {

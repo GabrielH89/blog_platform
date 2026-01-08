@@ -24,4 +24,6 @@
 
 	    // Admin / auditoria (opcional)
 	    List<Comment> findByPostId(Long postId);
+	    
+	    List<Comment> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 	}
