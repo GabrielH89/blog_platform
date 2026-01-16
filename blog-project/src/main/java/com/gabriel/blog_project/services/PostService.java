@@ -28,220 +28,209 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class PostService {
-	
-	private final PostRepository postRepository;
-	private final UserRepository userRepository;	
-	
-	public PostService(PostRepository postRepository, UserRepository userRepository) {
-		this.postRepository = postRepository;
-		this.userRepository = userRepository;
-	}
-		
-	public ShowPostDto createPost(CreatePostDto createPostDto, HttpServletRequest request) {
-	    long userId = (Long) request.getAttribute("userId");
 
-	    User user = userRepository.findById(userId)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-	    MultipartFile imageFile = createPostDto.imagePost();
-	    String fileName = null;
-	    String fileUrl = null; 
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+    }
 
-	    if (imageFile != null && !imageFile.isEmpty()) {
-	        fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-	        Path uploadPath = Paths.get("uploads").toAbsolutePath(); 
+    // ------------------ UTIL ------------------
 
-	        try {
-	            Files.createDirectories(uploadPath);
+    private User getAuthenticatedUser(HttpServletRequest request) {
+        long userId = (Long) request.getAttribute("userId");
 
-	            Path filePath = uploadPath.resolve(fileName);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
-	            // salva o arquivo no disco
-	            imageFile.transferTo(filePath.toFile());
+    private void checkPostPermission(User user, Post post) {
+        boolean isOwner = Objects.equals(post.getUser().getId(), user.getId());
+        boolean isAdmin = user.getRole() == EnumRole.ADMIN;
 
-	            // cria a URL relativa para acesso via HTTP
-	            fileUrl = "/uploads/" + fileName;
+        if (!isOwner && !isAdmin) {
+            throw new PermissionDeniedException("You have no permission to perform this action");
+        }
+    }
 
-	        } catch (IOException e) {
-	            throw new RuntimeException("Erro ao salvar imagem", e);
-	        }
-	    }
+    // ------------------ CREATE ------------------
 
-	    // cria a entidade Post, usando a URL da imagem
-	    var post = new Post(createPostDto.titlePost(), createPostDto.bodyPost(), fileUrl);
-	    post.setUser(user);
+    public ShowPostDto createPost(CreatePostDto dto, HttpServletRequest request) {
 
-	    var postSaved = postRepository.save(post);
+        User user = getAuthenticatedUser(request);
 
-	    return new ShowPostDto(
-	            postSaved.getId(),
-	            postSaved.getTitlePost(),
-	            postSaved.getBodyPost(),
-	            postSaved.getImagePost(), // aqui é a URL "/uploads/NOME_DO_ARQUIVO"
-	            postSaved.getCreatedAt(),
-	            postSaved.getUpdatedAt()
-	    );
-	}
-	
-	public List<ShowPostDto> getAllPosts(HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		var posts = postRepository.findAllByOrderByCreatedAtDesc();
-		
-		if(posts.isEmpty()) {
-			throw new EmptyDatasException("No posts found");
-		}		
-		
-		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(post.getId(), post.getTitlePost(), post.getBodyPost(), 
-				post.getImagePost(), post.getCreatedAt(), post.getUpdatedAt())).collect(Collectors.toList());
-		return result;
-	}
-	
-	public List<ShowPostDto> getPostsUser(HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		var posts = postRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
-		
-		if(posts.isEmpty()) {
-			throw new EmptyDatasException("No posts found");
-		}
-		
-		List<ShowPostDto> result = posts.stream().map(post -> new ShowPostDto(post.getId(), post.getTitlePost(), post.getBodyPost(), 
-				post.getImagePost(), post.getCreatedAt(), post.getUpdatedAt())).collect(Collectors.toList());
-		return result;
-	}
-	
-	public ShowPostDto getPostById(Long id, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		var post = postRepository.findById(id)
-		        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
-	    
-	    // Mapeia o Post para ShowPostDto
-	    return new ShowPostDto(
-	            post.getId(),
-	            post.getTitlePost(),
-	            post.getBodyPost(),
-	            post.getImagePost(),
-	            post.getCreatedAt(),
-	            post.getUpdatedAt()
-	    );
-	}
-	
-	public void deleteAllPosts(HttpServletRequest request) {
-	    long userId = (Long) request.getAttribute("userId");
+        MultipartFile imageFile = dto.imagePost();
+        String fileUrl = null;
 
-	    User user = userRepository.findById(userId)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads").toAbsolutePath();
 
-	    List<Post> postsToDelete;
+            try {
+                Files.createDirectories(uploadPath);
+                Path filePath = uploadPath.resolve(fileName);
+                imageFile.transferTo(filePath.toFile());
 
-	    if (user.getRole() == EnumRole.ADMIN) {
-	        postsToDelete = postRepository.findAll();
-	    } else {
-	        postsToDelete = postRepository.findAll().stream().filter(post -> post.getUser().getId().equals(userId)).collect(Collectors.toList());
-	    }
+                fileUrl = "/uploads/" + fileName;
 
-	    if (postsToDelete.isEmpty()) {
-	        throw new EmptyDatasException("No posts found to delete");
-	    }
+            } catch (IOException e) {
+                throw new RuntimeException("Erro ao salvar imagem", e);
+            }
+        }
 
-	    FileUtils.deleteImages(
-	        postsToDelete.stream().map(Post::getImagePost).filter(Objects::nonNull).collect(Collectors.toList())
-	    );
+        Post post = new Post(dto.titlePost(), dto.bodyPost(), fileUrl);
+        post.setUser(user);
 
-	    postRepository.deleteAll(postsToDelete);
-	}
-	
-	public void deletePostById(Long id, HttpServletRequest request) {
-		long userId = (Long) request.getAttribute("userId");
-		
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-		
-		Post post = postRepository.findById(id)
-			        .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
-		 
-		if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
-			 throw new PermissionDeniedException("You have no permission to delete this post");
-		}
+        Post saved = postRepository.save(post);
 
-		if(post.getImagePost() != null) {
-			FileUtils.deleteImages(List.of(post.getImagePost()));
-		}
-		
-		postRepository.deleteById(id);
-	}
-	
-	public ShowPostDto updatePostById(Long id, UpdatePostDto updateDto, HttpServletRequest request) {
-	    long userId = (Long) request.getAttribute("userId");
+        return new ShowPostDto(
+                saved.getId(),
+                saved.getTitlePost(),
+                saved.getBodyPost(),
+                saved.getImagePost(),
+                saved.getCreatedAt(),
+                saved.getUpdatedAt()
+        );
+    }
 
-	    User user = userRepository.findById(userId)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+    // ------------------ READ ------------------
 
-	    Post post = postRepository.findById(id)
-	            .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+    public List<ShowPostDto> getAllPosts(HttpServletRequest request) {
+        getAuthenticatedUser(request);
 
-	    if (!Objects.equals(post.getUser().getId(), userId) && user.getRole() != EnumRole.ADMIN) {
-	        throw new PermissionDeniedException("You have no permission to update this post");
-	    }
+        var posts = postRepository.findAllByOrderByCreatedAtDesc();
 
-	    MultipartFile newImageFile = updateDto.imagePost();
-	    String newFileName = null;
-	    String newFileUrl = null;
+        if (posts.isEmpty()) throw new EmptyDatasException("No posts found");
 
-	    // 🖼️ Se o usuário enviou uma nova imagem
-	    if (newImageFile != null && !newImageFile.isEmpty()) {
-	        // Deleta a imagem antiga, se existir
-	        if (post.getImagePost() != null) {
-	            FileUtils.deleteImages(List.of(post.getImagePost()));
-	        }
+        return posts.stream()
+                .map(p -> new ShowPostDto(
+                        p.getId(), p.getTitlePost(), p.getBodyPost(),
+                        p.getImagePost(), p.getCreatedAt(), p.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
 
-	        // Gera novo nome e caminho
-	        newFileName = System.currentTimeMillis() + "_" + newImageFile.getOriginalFilename();
-	        Path uploadPath = Paths.get("uploads").toAbsolutePath();
+    public List<ShowPostDto> getPostsUser(HttpServletRequest request) {
+        User user = getAuthenticatedUser(request);
 
-	        try {
-	            Files.createDirectories(uploadPath);
-	            Path filePath = uploadPath.resolve(newFileName);
-	            newImageFile.transferTo(filePath.toFile());
-	            newFileUrl = "/uploads/" + newFileName;
-	        } catch (IOException e) {
-	            throw new RuntimeException("Erro ao salvar nova imagem", e);
-	        }
+        var posts = postRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
 
-	        post.setImagePost(newFileUrl);
-	    }
+        if (posts.isEmpty()) throw new EmptyDatasException("No posts found");
 
-	    // 📝 Atualiza título e corpo
-	    if (updateDto.titlePost() != null)
-	        post.setTitlePost(updateDto.titlePost());
+        return posts.stream()
+                .map(p -> new ShowPostDto(
+                        p.getId(), p.getTitlePost(), p.getBodyPost(),
+                        p.getImagePost(), p.getCreatedAt(), p.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
+    }
 
-	    if (updateDto.bodyPost() != null)
-	        post.setBodyPost(updateDto.bodyPost());
+    public ShowPostDto getPostById(Long id, HttpServletRequest request) {
+        getAuthenticatedUser(request);
 
-	    // Atualiza a data
-	    post.setUpdatedAt(LocalDateTime.now());
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
 
-	    postRepository.save(post);
+        return new ShowPostDto(
+                post.getId(),
+                post.getTitlePost(),
+                post.getBodyPost(),
+                post.getImagePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        );
+    }
 
-	    return new ShowPostDto(
-	        post.getId(),
-	        post.getTitlePost(),
-	        post.getBodyPost(),
-	        post.getImagePost(),
-	        post.getCreatedAt(),
-	        post.getUpdatedAt()
-	    );
-	}
+    // ------------------ DELETE ------------------
 
+    public void deleteAllPosts(HttpServletRequest request) {
+        User user = getAuthenticatedUser(request);
+
+        List<Post> posts;
+
+        if (user.getRole() == EnumRole.ADMIN) {
+            posts = postRepository.findAll();
+        } else {
+            posts = postRepository.findAll()
+                    .stream()
+                    .filter(p -> p.getUser().getId().equals(user.getId()))
+                    .collect(Collectors.toList());
+        }
+
+        if (posts.isEmpty()) throw new EmptyDatasException("No posts found to delete");
+
+        FileUtils.deleteImages(
+                posts.stream()
+                        .map(Post::getImagePost)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
+
+        postRepository.deleteAll(posts);
+    }
+
+    public void deletePostById(Long id, HttpServletRequest request) {
+        User user = getAuthenticatedUser(request);
+
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+
+        checkPostPermission(user, post);
+
+        if (post.getImagePost() != null) {
+            FileUtils.deleteImages(List.of(post.getImagePost()));
+        }
+
+        postRepository.delete(post);
+    }
+
+    // ------------------ UPDATE ------------------
+
+    public ShowPostDto updatePostById(Long id, UpdatePostDto dto, HttpServletRequest request) {
+
+        User user = getAuthenticatedUser(request);
+
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EmptyDatasException("No post found with id " + id));
+
+        checkPostPermission(user, post);
+
+        MultipartFile newImage = dto.imagePost();
+
+        if (newImage != null && !newImage.isEmpty()) {
+
+            if (post.getImagePost() != null)
+                FileUtils.deleteImages(List.of(post.getImagePost()));
+
+            String fileName = System.currentTimeMillis() + "_" + newImage.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads").toAbsolutePath();
+
+            try {
+                Files.createDirectories(uploadPath);
+                Path filePath = uploadPath.resolve(fileName);
+                newImage.transferTo(filePath.toFile());
+                post.setImagePost("/uploads/" + fileName);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Erro ao salvar nova imagem", e);
+            }
+        }
+
+        if (dto.titlePost() != null) post.setTitlePost(dto.titlePost());
+        if (dto.bodyPost() != null) post.setBodyPost(dto.bodyPost());
+
+        post.setUpdatedAt(LocalDateTime.now());
+        postRepository.save(post);
+
+        return new ShowPostDto(
+                post.getId(),
+                post.getTitlePost(),
+                post.getBodyPost(),
+                post.getImagePost(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        );
+    }
 }
