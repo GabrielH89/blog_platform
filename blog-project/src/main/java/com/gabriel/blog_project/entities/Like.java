@@ -34,7 +34,7 @@ public class Like {
 	    /* POST ou COMMENT */
 	    @Enumerated(EnumType.STRING)
 	    @Column(name = "target_type", nullable = false, length = 20)
-	    private EnumLikeTargetType enumLiketargetType;
+	    private EnumLikeTargetType targetType;
 
 	    @Column(nullable = false)
 	    private LocalDateTime createdAt;
@@ -43,10 +43,10 @@ public class Like {
 	    	
 	    }
 	    
-	    public Like(User user, Long targetId, EnumLikeTargetType enumLiketargetType) {
+	    public Like(User user, Long targetId, EnumLikeTargetType targetType) {
 	        this.user = user;
 	        this.targetId = targetId;
-	        this.enumLiketargetType = enumLiketargetType;
+	        this.targetType = targetType;
 	    }
 	    
 	    @PrePersist
@@ -79,11 +79,11 @@ public class Like {
 		}
 
 		public EnumLikeTargetType getEnumLiketargetType() {
-			return enumLiketargetType;
+			return targetType;
 		}
 
 		public void setEnumLiketargetType(EnumLikeTargetType enumLiketargetType) {
-			this.enumLiketargetType = enumLiketargetType;
+			this.targetType = enumLiketargetType;
 		}
 
 		public LocalDateTime getCreatedAt() {
