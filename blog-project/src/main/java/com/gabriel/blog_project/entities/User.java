@@ -65,6 +65,9 @@ public class User implements UserDetails {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Rating> ratings;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Like> likes;
 
 	public User() {
 		
