@@ -6,6 +6,7 @@ import "../../styles/comments/CommentItem.css";
 import { FaEdit, FaTrash, FaUserCircle } from "react-icons/fa";
 import EditComment from "./EditComment";
 import Modal from "../../utils/Modal";
+import LikeButton from "../likes/LikeButton";
 
 interface CommentItemProps {
   comment: Comment;
@@ -154,6 +155,7 @@ function CommentItem({comment, postId, API_URL, onReload, onDeleted, onEdited}: 
           </div>
         </div>
       )}
+      <LikeButton targetId={comment.id} targetType="COMMENT" />
     </div>
   );
 }

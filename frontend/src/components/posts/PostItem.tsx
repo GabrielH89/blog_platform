@@ -7,6 +7,7 @@ import Modal from "../../utils/Modal";
 import CreateRating from "../ratings/CreateRating";
 import RatingDisplay from "../ratings/RatingDisplay";
 import { useNavigate } from "react-router-dom";
+import LikeButton from "../likes/LikeButton";
 
 interface Post {
   id: number;
@@ -128,6 +129,8 @@ function PostItem({ post, API_URL, onDeleted, onEdited }: PostItemProps) {
           <small>Criado em: {new Date(post.createdAt).toLocaleDateString()}</small>
           <small>Atualizado em: {new Date(post.updatedAt).toLocaleDateString()}</small>
         </div>
+        
+         <LikeButton targetId={post.id} targetType="POST" />
       </div>
     </>
   );

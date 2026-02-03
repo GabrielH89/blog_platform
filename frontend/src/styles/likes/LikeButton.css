@@ -1,0 +1,36 @@
+.like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 14px;
+  color: #555;
+
+  transition: transform 0.12s ease, color 0.12s ease;
+}
+
+/* hover */
+.like-btn:hover {
+  transform: scale(1.1);
+  color: #2563eb;
+}
+
+/* quando curtido */
+.like-btn.liked {
+  color: #2563eb;
+}
+
+/* loading */
+.like-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* tamanho do ícone */
+.like-btn svg {
+  font-size: 18px;
+}
