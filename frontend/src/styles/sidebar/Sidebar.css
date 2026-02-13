@@ -1,0 +1,191 @@
+/* ==========================
+   MODAL
+========================== */
+
+.user-area-modal h2 {
+  color: white;
+  font-size: 1.4rem;
+}
+
+.user-area-modal p {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.user-area-modal-btn {
+  display: flex;
+  justify-content: space-around;
+}
+
+.user-area-modal-btn button {
+  width: 100px;
+  height: 34px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+}
+
+.user-area-modal-btn .confirm-btn:hover {
+  background-color: green;
+  color: white;
+  transition: 0.3s;
+}
+
+.user-area-modal-btn .cancel-btn:hover {
+  background-color: firebrick;
+  color: white;
+  transition: 0.3s;
+}
+
+
+/* ==========================
+   SIDEBAR (DESKTOP)
+========================== */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 260px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #111827;
+  border-right: 2px solid white;
+}
+
+/* imagem / ícone */
+.sidebar img,
+.sidebar svg {
+  display: block;
+  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* lista */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.sidebar li {
+  margin: 8px 0;
+  width: 80%;
+}
+
+/* ==========================
+   LINKS E BOTÕES PADRONIZADOS
+========================== */
+
+.sidebar a,
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+}
+
+/* ==========================
+   RESPONSIVO (MOBILE)
+========================== */
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .sidebar.open {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 420px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #111827;
+    border-right: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 1200;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar img,
+  .sidebar svg {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto 14px auto;
+  }
+
+  .sidebar ul {
+    width: 100%;
+  }
+
+  .sidebar li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar a,
+  .sidebar button {
+    width: 92%;
+    max-width: 360px;
+    padding: 10px 14px;
+    color: white;
+  }
+}
+
+
+/* ==========================
+   TELAS MUITO PEQUENAS
+========================== */
+@media (max-width: 450px) {
+  .sidebar.open {
+    top: 8px;
+    width: calc(100% - 16px);
+    max-width: 380px;
+    padding: 12px;
+  }
+
+  .sidebar img,
+  .sidebar svg {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .sidebar a,
+  .sidebar button {
+    width: 96%;
+    font-size: 0.95rem;
+  }
+}
