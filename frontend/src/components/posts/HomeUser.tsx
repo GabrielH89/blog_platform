@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import "../../styles/posts/HomeUser.css";
 import AddPostForm from "./AddPostForm";
 import Modal from "../../utils/Modal";
-import UserArea from "../users/UserArea";
 import PostCard from "./PostCard";
 import PostItem from "./PostItem";
+import Sidebar from "../sidebar/Sidebar";
 
 interface Post {
   id: number;
@@ -54,11 +54,13 @@ function HomeUser() {
   return (
     <div className="home-container">
       {/* Área do usuário */}
-      <UserArea
-        onDeleteAllPosts={fetchPosts}
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-      />
+     <Sidebar
+  role="user"
+  isSidebarOpen={isSidebarOpen}
+  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+  onDeleteAllPosts={fetchPosts}
+/>
+
 
       {/* Área principal */}
       <main className="posts-section">

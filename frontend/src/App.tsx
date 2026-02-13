@@ -6,6 +6,7 @@ import PrivateRoute from './utils/PrivateRoute';
 import Profile from './components/users/Profile';
 import PostCard from './components/posts/PostCard';
 import Historic from './components/users/Historic';
+import AdminHome from './components/admin/AdminHome';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path='/user/profile' element={<PrivateRoute element={<Profile/>}/>}/>
           <Route path='/home/post/:id' element={<PrivateRoute element={<PostCard/>}/>}/>
           <Route path='/user/historic' element={<PrivateRoute element={<Historic/>}/>}/>
+          <Route path='/admin/home' element={<PrivateRoute element={<AdminHome/>}/>}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -36,7 +36,7 @@ function SignIn() {
       if(role === "USER") {
         navigate("/user/home");
       }else{
-        navigate("/admin")
+        navigate("/admin/home")
       }
     }catch(error) {
       const axiosError = error as AxiosError;

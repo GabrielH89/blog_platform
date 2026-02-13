@@ -22,6 +22,7 @@ interface Post {
 interface PostItemProps {
   post: Post;
   API_URL: string;
+  onClick: () => void;
   onDeleted: (id: number) => void;
   onEdited: (post: Post) => void;
 }
