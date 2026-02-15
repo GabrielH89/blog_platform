@@ -90,7 +90,10 @@ function Sidebar({
           {role === "admin" && (
             <>
               <li>
-                <Link to="/admin">Painel do Admin</Link>
+                <Link to="/admin/dashboard">Painel do Admin</Link>
+              </li>
+              <li>
+                <Link to="/admin/profile">Informações pessoais</Link>
               </li>
               <li>
                 <Link to="/admin/users">Usuários</Link>
