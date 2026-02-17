@@ -8,9 +8,10 @@ import PostCard from './components/posts/PostCard';
 import Historic from './components/users/Historic';
 import AdminHome from './components/admin/AdminHome';
 import AdminProfile from './components/admin/AdminProfile';
+import AdminPosts from './components/admin/AdminPosts';
+import AdminListUsers from './components/admin/AdminListUsers';
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -23,8 +24,9 @@ function App() {
 
           //
           <Route path='/admin/home' element={<PrivateRoute element={<AdminHome/>}/>}/>
-          <Route path='/user/profile' element={<PrivateRoute element={<Profile/>}/>}/>
           <Route path='/admin/profile' element={<PrivateRoute element={<AdminProfile/>}/>}/>
+          <Route path='/admin/posts' element={<PrivateRoute element={<AdminPosts/>}/>}/>
+          <Route path="/admin/users" element={<AdminListUsers />} />
         </Routes>
       </BrowserRouter>
     </>
