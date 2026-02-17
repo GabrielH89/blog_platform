@@ -1,5 +1,6 @@
 package com.gabriel.blog_project.controllers;
 
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,4 +54,5 @@ public class UserController {
 		UserDto userDto = userService.getUserById(request);
 		return ResponseEntity.ok(userDto);
 	}
+	
 }

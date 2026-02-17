@@ -3,6 +3,7 @@ package com.gabriel.blog_project.services;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gabriel.blog_project.dtos.post.ShowPostDto;
 import com.gabriel.blog_project.dtos.user.DeleteImageUserDto;
 import com.gabriel.blog_project.dtos.user.UpdateDatasUserDto;
 import com.gabriel.blog_project.dtos.user.UserDto;
@@ -18,6 +20,7 @@ import com.gabriel.blog_project.entities.Comment;
 import com.gabriel.blog_project.entities.EnumRole;
 import com.gabriel.blog_project.entities.User;
 import com.gabriel.blog_project.exceptions.EmptyDatasException;
+import com.gabriel.blog_project.exceptions.PermissionDeniedException;
 import com.gabriel.blog_project.repositories.CommentRepository;
 import com.gabriel.blog_project.repositories.UserRepository;
 import com.gabriel.blog_project.security.TokenService;
@@ -169,5 +172,42 @@ public class UserService implements UserDetailsService {
 	        user.getImageUser()
 	    );
 	}
+	
+	public List<UserDto> getAllUsers(HttpServletRequest request) {
+		long userId = (Long) request.getAttribute("userId");
+		
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+				
+		if(user.getRole() != EnumRole.ADMIN) {
+			throw new PermissionDeniedException("Acess denied");
+		}
+		
+		List<User> usersFound = userRepository.findAll();
+		
+		 if (usersFound.isEmpty()) {
+		        throw new EmptyDatasException("No users found");
+		    }
+
+		 return usersFound.stream().map(u -> new UserDto(u.getUsername(), u.getLogin(), u.getImageUser())).collect(Collectors.toList());
+	}
+	
+	public Long countTotalUsers(HttpServletRequest request) {
+	    Long userId = (Long) request.getAttribute("userId");
+
+	    if (userId == null) {
+	        throw new RuntimeException("Unauthorized");
+	    }
+
+	    User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    if (user.getRole() != EnumRole.ADMIN) {
+	        throw new PermissionDeniedException("Access denied");
+	    }
+
+	    return userRepository.count();
+	}
+
 
 }
