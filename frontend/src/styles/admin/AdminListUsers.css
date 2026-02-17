@@ -1,0 +1,157 @@
+.admin-list-users {
+  display: flex;
+  min-height: 100vh;
+  background-color: #111827;
+  transition: all 0.3s ease;
+}
+
+.users-section {
+  flex: 1;
+  padding: 40px;
+  transition: all 0.3s ease;
+}
+
+/* ============================= */
+/* TÍTULO */
+/* ============================= */
+
+.users-section h1 {
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ============================= */
+/* GRID DE USUÁRIOS */
+/* ============================= */
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* ============================= */
+/* CARD */
+/* ============================= */
+
+.user-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  min-height: 150px;
+  margin-bottom: 10px;
+}
+
+.user-card:hover {
+  transform: translateY(-4px);
+}
+
+/* FOTO */
+
+.profile-picture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ============================= */
+/* INFORMAÇÕES */
+/* ============================= */
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;        /* ocupa espaço disponível */
+  min-width: 0;   /* 🔥 evita overflow no flex */
+}
+
+.info-row {
+  display: flex;
+  gap: 8px;
+  min-width: 0; /* necessário para quebra correta */
+}
+
+.label {
+  font-weight: 600;
+  color: #111;
+  min-width: 65px;
+  flex-shrink: 0;
+}
+
+.value {
+  color: #555;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================= */
+/* BOTÃO */
+/* ============================= */
+
+.user-card button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  transition: 0.2s ease;
+  height: 45px;
+  flex-shrink: 0; /* 🔥 botão não encolhe */
+}
+
+.user-card button:hover {
+  opacity: 0.9;
+}
+
+/* ============================= */
+/* RESPONSIVIDADE */
+/* ============================= */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .admin-list-users {
+    flex-direction: column;
+  }
+
+  .users-section {
+    padding: 25px;
+  }
+
+  .users-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .user-card button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
